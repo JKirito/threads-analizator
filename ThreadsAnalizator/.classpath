@@ -19,5 +19,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="Lib/jsoup-1.7.3.jar" sourcepath="Lib/jsoup-1.7.3-sources.jar"/>
+	<classpathentry kind="lib" path="Lib/jcalendar-1.4/jcalendar-1.4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
