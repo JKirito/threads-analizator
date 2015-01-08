@@ -4,6 +4,8 @@ import java.util.Date;
 
 public class ModeloDescargaTapas extends ModeloDescarga {
 
+	private static final String MSJ_FECHA_VACIO = "Debe completar la fecha hasta donde descargar las tapas";
+	private static final String MSJ_FECHA_FUTURO = "La fecha máxima es la de hoy, no puedes descargar lo que no existe!";
 	private Date fechaDescargaHasta;
 	private int cantTapasDescargar;
 
@@ -36,7 +38,7 @@ public class ModeloDescargaTapas extends ModeloDescarga {
 
 	@Override
 	public void descargar() {
-		// TODO Auto-generated method stub
+		System.out.println("Descargar TAPAS!!!!!!!!!!!!!!");
 
 	}
 
@@ -44,6 +46,19 @@ public class ModeloDescargaTapas extends ModeloDescarga {
 	public int getCantOptimaHilos() {
 		// TODO Auto-generated method stub
 		return 0;
+	}
+
+	@Override
+	public String validarDatos() {
+		String errores = super.validarDatos();
+		if (this.fechaDescargaHasta == null) {
+			errores += "-" + MSJ_FECHA_VACIO + "\n";
+		}
+		if (this.fechaDescargaHasta != null) {
+			if(this.fechaDescargaHasta.after(new Date()))
+			errores += "-" + MSJ_FECHA_FUTURO + "\n";
+		}
+		return errores;
 	}
 
 }
