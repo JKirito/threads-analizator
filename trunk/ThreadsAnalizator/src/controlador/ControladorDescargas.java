@@ -2,124 +2,237 @@ package controlador;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 import modelo.ModeloDescarga;
+import modelo.ModeloDescargaNotas;
+import modelo.ModeloDescargaTapas;
 import vista.SetupGetDirVista;
 import vista.VistaDescargas;
+import Utils.SwingUtils;
 
 public class ControladorDescargas implements ActionListener {
 
-	ModeloDescarga modelo;
-	VistaDescargas vistaDescargas;
+	private VistaDescargas vistaDescargas;
+	private ModeloDescarga modeloDescarga;
 
-	public ControladorDescargas(ModeloDescarga modelo, VistaDescargas vista) {
-		this.modelo = modelo;
+	// private ModeloDescargaNotas modeloDescargaNotas;
+	// private ModeloDescargaTapas modeloDescargaTapas;
+
+	public ControladorDescargas(VistaDescargas vista) {
 		this.vistaDescargas = vista;
+		// this.modeloDescargaNotas = new ModeloDescargaNotas();
+		// this.modeloDescargaTapas = new ModeloDescargaTapas();
 		cargarDatosIniciales();
 		actionListener(this);
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// Agregar carpeta a la lista de irigen
-		if (e.getSource() == vistaDescargas.getBtnAgregarOrigen()) {
+		// SE ELIGE MODO DESCARGA
+		if (e.getSource() == vistaDescargas.getRadioBtnDescargarNotas()
+				|| e.getSource() == vistaDescargas.getRadioBtnDescargarTapas()) {
+
+			if (vistaDescargas.getRadioBtnDescargarNotas().isSelected()) {
+				deshabilitarCamposTapa();
+			} else if (vistaDescargas.getRadioBtnDescargarTapas().isSelected()) {
+				deshabilitarCamposNota();
+			}
+		}
+		// SE ELIGE DIARIO PAGINA 12
+		if (e.getSource() == vistaDescargas.getRadioBtnPagina12()) {
+
+		}
+
+		// SE ELIGE DIARIO LA NACION
+		if (e.getSource() == vistaDescargas.getRadioBtnLaNacion()) {
+
+		}
+
+		// SE ELIGE SECCION ECONOMIA
+		if (e.getSource() == vistaDescargas.getChckbxEconomia()) {
+
+		}
+
+		// SE ELIGE ORIGEN
+		if (e.getSource() == vistaDescargas.getBtnAgregarCarpetaOrigen()) {
 			SetupGetDirVista mkdir = new SetupGetDirVista(vistaDescargas.getFrame(), true, true);
 			int returnVal = mkdir.getJFileChooser1().showOpenDialog(vistaDescargas.getFrame());
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
-				this.modelo.getListaCarpetasOrigen().add(mkdir.getSelected().toString());
-				this.vistaDescargas.getListCarpetasOrigen().setListData(this.modelo.getArrayCarpetasOrigen());
+				this.vistaDescargas.getTextFieldCarpetaOrigen().setText(mkdir.getSelected().toString());
 			}
 		}
-		// Eliminar carpeta de la lista de origen
-		if (e.getSource() == vistaDescargas.getBtnEliminarOrigen()) {
-			if (this.vistaDescargas.getListCarpetasOrigen().getSelectedIndex() != -1) {
-				this.modelo.getListaCarpetasOrigen().remove(vistaDescargas.getListCarpetasOrigen().getSelectedValue());
-				this.vistaDescargas.getListCarpetasOrigen().setListData(this.modelo.getArrayCarpetasOrigen());
-			} else {// TODO: Necesario??
-				mostrarMsjAUsuario("Debe seleccionar una carpeta de la lista", "Alerta", JOptionPane.WARNING_MESSAGE);
-			}
-		}
-		// Agregar carpeta de destino
-		if (e.getSource() == vistaDescargas.getBtnAgregarDestino()) {
+		// SE ELIGE DESTINO
+		if (e.getSource() == vistaDescargas.getBtnAgregarCarpetaDestino()) {
 			SetupGetDirVista mkdir = new SetupGetDirVista(vistaDescargas.getFrame(), true, true);
 			int returnVal = mkdir.getJFileChooser1().showOpenDialog(vistaDescargas.getFrame());
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
-				this.modelo.setCarpetaDestino(mkdir.getSelected().toString());
-				this.vistaDescargas.getLblCarpetaDest().setText(this.modelo.getCarpetaDestino());
+				this.vistaDescargas.getTextFieldCarpetaDestino().setText(mkdir.getSelected().toString());
 			}
 		}
+
+		// SALIR
+		if (e.getSource() == vistaDescargas.getBtnSalir()) {
+			vistaDescargas.getFrame().setVisible(false);
+			System.exit(0);
+		}
+
 		// Procesar
-		if (e.getSource() == vistaDescargas.getButtonProcesar()) {
-			this.modelo.setFechaArchivosDesde(this.vistaDescargas.getDateChooser().getDate());
-			if (!this.modelo.validarProcesar().isEmpty()) {
-				mostrarMsjAUsuario(this.modelo.validarProcesar(), "Alerta", JOptionPane.WARNING_MESSAGE);
+		if (e.getSource() == vistaDescargas.getButtonDescargar()) {
+			boolean procesar = true;
+			if (vistaDescargas.getRadioBtnDescargarNotas().isSelected()) {
+				this.modeloDescarga = new ModeloDescargaNotas();
+				cargarDatosModoDescargaNotas();
+
+				String msjValidacion = ((ModeloDescargaNotas) this.modeloDescarga).validarDatos();
+				if (!msjValidacion.isEmpty()) {
+					procesar = false;
+					mostrarMsjAUsuario(msjValidacion, "Alerta", JOptionPane.WARNING_MESSAGE);
+				}
+
+			} else if (vistaDescargas.getRadioBtnDescargarTapas().isSelected()) {
+				this.modeloDescarga = new ModeloDescargaTapas();
+				cargarDatosModoDescargaTapas();
+
+				String msjValidacion = ((ModeloDescargaTapas) this.modeloDescarga).validarDatos();
+				if (!msjValidacion.isEmpty()) {
+					procesar = false;
+					mostrarMsjAUsuario(msjValidacion, "Alerta", JOptionPane.WARNING_MESSAGE);
+				}
+
 			} else {
-				//Motrar resultado proceso
-				try {
-					this.vistaDescargas.getButtonProcesar().setEnabled(false);
-					this.modelo.procesar();
-					this.vistaDescargas.getButtonProcesar().setEnabled(true);
-					vistaResultado.getTextArea().setText(this.modelo.getResultadoProceso());
-					vistaResultado.setVisible(true);
-				} catch (Exception e1) {
-					mostrarMsjAUsuario(e1.getMessage(), "Error al procesar", JOptionPane.ERROR_MESSAGE);
-					e1.printStackTrace();
-				}
+				procesar = false;
+				String modosDescarga = "Nota - Tapa";
+				mostrarMsjAUsuario("Debe seleccionar el modo de descarga: " + modosDescarga, "Seleccionar Modo",
+						JOptionPane.WARNING_MESSAGE);
+			}
+
+			if(!procesar)
+				return;
+
+			// PROCESAR
+			try {
+				SwingUtils.setEnableContainer(vistaDescargas.getButtonDescargar(), false);
+				String txtButnDescargar = this.vistaDescargas.getButtonDescargar().getText();
+				this.vistaDescargas.getButtonDescargar().setText("Procesando..");
+				// TODO: Agregar opción de buscar cant optimizada de hilos a
+				// usar!!!
+				this.modeloDescarga.descargar();
+
+				this.vistaDescargas.getButtonDescargar().setText(txtButnDescargar);
+				this.vistaDescargas.getButtonDescargar().setEnabled(true);
+
+			} catch (Exception e1) {
+				mostrarMsjAUsuario(e1.getMessage(), "Error al procesar", JOptionPane.ERROR_MESSAGE);
+				e1.printStackTrace();
 			}
 		}
-		//Cerrar ventana con resultado proceso
-		if (e.getSource() == vistaResultado.getBtnCerrar()) {
-			vistaResultado.setVisible(false);
+
+
+
+		// Guardar resultado proceso a archivo
+		// if (e.getSource() == vistaResultado.getBtnGuardar()) {
+		// SetupGetDirVista mkdir = new SetupGetDirVista(null, true, false);
+		// int returnVal = mkdir.getJFileChooser1().showSaveDialog(null);
+		// String rutaArchivo = mkdir.getSelected().getAbsolutePath();
+		// if (returnVal == JFileChooser.APPROVE_OPTION) {
+		// if (new File(rutaArchivo).isFile() && new File(rutaArchivo).exists())
+		// {
+		// mostrarMsjAUsuario("Ya existe un archivo con ese nombre",
+		// "Archivo existente",
+		// JOptionPane.ERROR_MESSAGE);
+		// } else {
+		// try {
+		// this.modeloDescargaNotas.guardarResultadoProceso(rutaArchivo);
+		// mostrarMsjAUsuario("El archivo se guardó correctamente",
+		// "Operacion completada",
+		// JOptionPane.INFORMATION_MESSAGE);
+		// } catch (Exception e1) {
+		// vistaResultado.dispose();
+		// mostrarMsjAUsuario(e1.getMessage(), "Error al guardar",
+		// JOptionPane.ERROR_MESSAGE);
+		// }
+		// }
+		// }
+		// }
+	}
+
+	private void cargarDatosModoDescargaComunes() {
+		if (vistaDescargas.getChckbxEconomia().isSelected()) {
+			this.modeloDescarga.setSeccionDescarga(vistaDescargas.getChckbxEconomia().getText());
 		}
-		//Guardar resultado proceso a archivo
-		if (e.getSource() == vistaResultado.getBtnGuardar()) {
-			SetupGetDirVista mkdir = new SetupGetDirVista(null, true, false);
-			int returnVal = mkdir.getJFileChooser1().showSaveDialog(null);
-			String rutaArchivo = mkdir.getSelected().getAbsolutePath();
-			if (returnVal == JFileChooser.APPROVE_OPTION) {
-				if (new File(rutaArchivo).isFile() && new File(rutaArchivo).exists()) {
-					mostrarMsjAUsuario("Ya existe un archivo con ese nombre", "Archivo existente", JOptionPane.ERROR_MESSAGE);
-				} else {
-					try {
-						this.modelo.guardarResultadoProceso(rutaArchivo);
-						mostrarMsjAUsuario("El archivo se guardó correctamente", "Operacion completada", JOptionPane.INFORMATION_MESSAGE);
-					} catch (Exception e1) {
-						vistaResultado.dispose();
-						mostrarMsjAUsuario(e1.getMessage(), "Error al guardar", JOptionPane.ERROR_MESSAGE);
-					}
-				}
-			}
+		if (vistaDescargas.getRadioBtnLaNacion().isSelected()) {
+			this.modeloDescarga.setDiarioDescarga(vistaDescargas.getRadioBtnLaNacion().getText());
+		} else if (vistaDescargas.getRadioBtnPagina12().isSelected()) {
+			this.modeloDescarga.setDiarioDescarga(vistaDescargas.getRadioBtnPagina12().getText());
 		}
+		this.modeloDescarga.setRutaDestino(vistaDescargas.getTextFieldCarpetaDestino().getText());
+	}
+
+	private void cargarDatosModoDescargaNotas() {
+		cargarDatosModoDescargaComunes();
+		((ModeloDescargaNotas) this.modeloDescarga).setRutaOrigen(vistaDescargas.getTextFieldCarpetaOrigen().getText());
+	}
+
+	private void cargarDatosModoDescargaTapas() {
+		cargarDatosModoDescargaComunes();
+		((ModeloDescargaTapas) this.modeloDescarga).setCantTapasDescargar((Integer) vistaDescargas.getSpinnerCantDias()
+				.getValue());
+		((ModeloDescargaTapas) this.modeloDescarga).setFechaDescargaHasta(vistaDescargas.getDateChooser().getDate());
 	}
 
 	public void actionListener(ActionListener escuchador) {
-		vistaDescargas.getBtnAgregarOrigen().addActionListener(escuchador);
-		vistaDescargas.getBtnEliminarOrigen().addActionListener(escuchador);
-		vistaDescargas.getBtnAgregarDestino().addActionListener(escuchador);
-		vistaDescargas.getButtonProcesar().addActionListener(escuchador);
+		vistaDescargas.getRadioBtnDescargarNotas().addActionListener(escuchador);
+		vistaDescargas.getRadioBtnDescargarTapas().addActionListener(escuchador);
+		vistaDescargas.getRadioBtnPagina12().addActionListener(escuchador);
+		vistaDescargas.getRadioBtnLaNacion().addActionListener(escuchador);
+		vistaDescargas.getChckbxEconomia().addActionListener(escuchador);
+		vistaDescargas.getBtnAgregarCarpetaOrigen().addActionListener(escuchador);
+		vistaDescargas.getBtnAgregarCarpetaDestino().addActionListener(escuchador);
+		vistaDescargas.getButtonDescargar().addActionListener(escuchador);
+		vistaDescargas.getBtnSalir().addActionListener(escuchador);
 	}
 
-	public static boolean solicitarRespuestaAUsuario(String consulta) {
-		return PrincipalVista.solicitarRespuestaAUsuario(consulta);
+	public boolean solicitarRespuestaAUsuario(String consulta) {
+		return vistaDescargas.solicitarRespuestaAUsuario(consulta);
 	}
 
-	public static void mostrarMsjAUsuario(String msj, String title, int warningMessage) {
-		PrincipalVista.mostrarMsjAUsuario(msj, title, warningMessage);
+	public void mostrarMsjAUsuario(String msj, String title, int warningMessage) {
+		vistaDescargas.mostrarMsjAUsuario(msj, title, warningMessage);
 	}
 
 	private void cargarDatosIniciales() {
-		if(!this.modelo.getListaCarpetasOrigen().isEmpty()){
-			this.vistaDescargas.getListCarpetasOrigen().setListData(this.modelo.getArrayCarpetasOrigen());
+		// TODO: comienza alguno seleccionado del modo descarga?
+		if (vistaDescargas.getRadioBtnDescargarTapas().isSelected()) {
+			this.deshabilitarCamposNota();
+		} else if (vistaDescargas.getRadioBtnDescargarNotas().isSelected()) {
+			this.deshabilitarCamposTapa();
 		}
-		if(!this.modelo.getCarpetaDestino().isEmpty()){
-			this.vistaDescargas.getLblCarpetaDest().setText(this.modelo.getCarpetaDestino());
-		}
-		if(this.modelo.getFechaArchivosDesde() != null){
-			this.vistaDescargas.getDateChooser().setDate(this.modelo.getFechaArchivosDesde());
-		}
+
+		// TODO: podría guardar las últimas opciones utilizadas como
+		// predeterminado
+
+	}
+
+	// Deshabilito los campos que se usan para descargar Notas
+	private void deshabilitarCamposNota() {
+		habilitarCamposTapa();
+		SwingUtils.setEnableContainer(vistaDescargas.getPanelCarpetaOrigen(), false);
+	}
+
+	// Deshabilito los campos que se usan para descargar Tapas
+	private void deshabilitarCamposTapa() {
+		habilitarCamposNota();
+		SwingUtils.setEnableContainer(vistaDescargas.getPanelFecha(), false);
+	}
+
+	private void habilitarCamposNota() {
+		SwingUtils.setEnableContainer(vistaDescargas.getPanelCarpetaOrigen(), true);
+	}
+
+	private void habilitarCamposTapa() {
+		SwingUtils.setEnableContainer(vistaDescargas.getPanelFecha(), true);
 	}
 }
