@@ -7,6 +7,7 @@ public class LaNacion extends DiarioDigital{
 	private static final String LINK_LANACION = "http://servicios.lanacion.com.ar/archivo-f";// 04/09/2014-c30"
 	private static final String CHARSETNAME_LANACION = "utf-8";
 	private static final String NOMBREPREFIJO_AGUARDAR = "LaNacion";
+	public static final String NOMBRE_DIARIO = "La Nación";
 
 
 	public LaNacion() {
