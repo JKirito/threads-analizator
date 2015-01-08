@@ -1,6 +1,15 @@
 package modelo;
 
+import java.io.File;
 import java.util.Date;
+
+import servicios.PageDownloader;
+import entities.DiarioDigital;
+import entities.EconomiaLN;
+import entities.EconomiaP12;
+import entities.LaNacion;
+import entities.Pagina12;
+import entities.Seccion;
 
 public class ModeloDescargaTapas extends ModeloDescarga {
 
@@ -16,7 +25,7 @@ public class ModeloDescargaTapas extends ModeloDescarga {
 		this.cantTapasDescargar = cantTapasDescargar;
 	}
 
-	public ModeloDescargaTapas(){
+	public ModeloDescargaTapas() {
 		super();
 	}
 
@@ -39,7 +48,26 @@ public class ModeloDescargaTapas extends ModeloDescarga {
 	@Override
 	public void descargar() {
 		System.out.println("Descargar TAPAS!!!!!!!!!!!!!!");
+		DiarioDigital diario = null;
+		Seccion seccion = null;
+		if (this.getDiarioDescarga().equals(Pagina12.NOMBRE_DIARIO)) {
+			diario = new Pagina12();
+			if (this.getSeccionDescarga().equals(EconomiaP12.nombreSeccion)) {
+				seccion = new EconomiaP12();
+			}
+		} else if (this.getDiarioDescarga().equals(LaNacion.NOMBRE_DIARIO)) {
+			diario = new LaNacion();
+			if (this.getSeccionDescarga().equals(EconomiaLN.nombreSeccion)) {
+				seccion = new EconomiaLN();
+			}
+		}
 
+		String pathAGuardar = this.getRutaDestino()+File.separatorChar;
+		Date fechaHasta = this.getFechaDescargaHasta();
+		int diasARecopílar = this.getCantTapasDescargar();
+		PageDownloader pd = new PageDownloader(diario, seccion, pathAGuardar, fechaHasta, diasARecopílar);
+		pd.download();
+		System.out.println(pd.getErroresDescarga()+"AAAAAAAAAAAAAAAAAAAa");
 	}
 
 	@Override
@@ -55,8 +83,8 @@ public class ModeloDescargaTapas extends ModeloDescarga {
 			errores += "-" + MSJ_FECHA_VACIO + "\n";
 		}
 		if (this.fechaDescargaHasta != null) {
-			if(this.fechaDescargaHasta.after(new Date()))
-			errores += "-" + MSJ_FECHA_FUTURO + "\n";
+			if (this.fechaDescargaHasta.after(new Date()))
+				errores += "-" + MSJ_FECHA_FUTURO + "\n";
 		}
 		return errores;
 	}
