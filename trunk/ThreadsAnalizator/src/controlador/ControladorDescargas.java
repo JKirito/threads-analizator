@@ -114,9 +114,11 @@ public class ControladorDescargas implements ActionListener {
 
 			// PROCESAR
 			try {
-				SwingUtils.setEnableContainer(vistaDescargas.getButtonDescargar(), false);
 				String txtButnDescargar = this.vistaDescargas.getButtonDescargar().getText();
-				this.vistaDescargas.getButtonDescargar().setText("Procesando..");
+				this.vistaDescargas.getButtonDescargar().setText("Descargando..");
+				SwingUtils.setEnableContainer(vistaDescargas.getButtonDescargar(), false);
+
+				this.mostrarMsjAUsuario("El proceso puede tardar muuuucho tiempo...", "Descargando..", JOptionPane.INFORMATION_MESSAGE);
 				// TODO: Agregar opción de buscar cant optimizada de hilos a
 				// usar!!!
 				this.modeloDescarga.descargar();
