@@ -1,4 +1,4 @@
-package lanacion;
+package servicios_LaNacion;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,7 +12,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import servicios.StoreFile;
+import Utils.StoreFile;
 
 public class NoteProcessor implements Runnable {
 

@@ -1,4 +1,4 @@
-package lanacion;
+package servicios_LaNacion;
 
 
 public class DescargarNotasEconomiaLaNacion {
