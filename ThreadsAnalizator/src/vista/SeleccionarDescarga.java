@@ -3,7 +3,6 @@ package vista;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 
 public class SeleccionarDescarga extends JFrame {
@@ -14,12 +13,12 @@ public class SeleccionarDescarga extends JFrame {
 	JButton btnDescargarNotas;
 
 	public SeleccionarDescarga() {
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		try {
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+//		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//		try {
+//			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
 		initialize();
 	}
 

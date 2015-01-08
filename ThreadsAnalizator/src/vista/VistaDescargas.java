@@ -14,6 +14,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JSeparator;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 
@@ -22,8 +23,12 @@ import com.toedter.calendar.JDateChooser;
 public class VistaDescargas {
 
 	private JFrame frmPagedownloader;
+	private JPanel panelModoDescarga;
 	private JPanel panelDiario;
+	private ButtonGroup grupoModoDescarga;
 	private ButtonGroup grupoDiario;
+	private JRadioButton radioBtnDescargarTapas;
+	private JRadioButton radioBtnDescargarNotas;
 	private JRadioButton radioBtnPagina12;
 	private JRadioButton radioBtnLaNacion;
 	private JPanel panelSeccion;
@@ -33,10 +38,10 @@ public class VistaDescargas {
 	private JPanel panelCarpetaDestino;
 	private JButton btnAgregarCarpetaDestino;
 	private JPanel panelFecha;
-	private JSpinner spinner;
+	private JSpinner spinnerCantDias;
 	private JPanel panelBotonesProcesar_Salir;
 	private JDateChooser dateChooser;
-	private JButton buttonProcesar;
+	private JButton buttonDescargar;
 	private JButton btnSalir;
 	private JTextField textFieldCarpetaOrigen;
 	private JTextField textFieldCarpetaDestino;
@@ -58,12 +63,88 @@ public class VistaDescargas {
 		return dateChooser;
 	}
 
-	public JButton getButtonProcesar() {
-		return buttonProcesar;
+	public JButton getButtonDescargar() {
+		return buttonDescargar;
 	}
 
 	public JButton getBtnSalir() {
 		return btnSalir;
+	}
+
+	public JPanel getPanelModoDescarga() {
+		return panelModoDescarga;
+	}
+
+	public JPanel getPanelDiario() {
+		return panelDiario;
+	}
+
+	public ButtonGroup getGrupoModoDescarga() {
+		return grupoModoDescarga;
+	}
+
+	public ButtonGroup getGrupoDiario() {
+		return grupoDiario;
+	}
+
+	public JRadioButton getRadioBtnDescargarTapas() {
+		return radioBtnDescargarTapas;
+	}
+
+	public JRadioButton getRadioBtnDescargarNotas() {
+		return radioBtnDescargarNotas;
+	}
+
+	public JRadioButton getRadioBtnPagina12() {
+		return radioBtnPagina12;
+	}
+
+	public JRadioButton getRadioBtnLaNacion() {
+		return radioBtnLaNacion;
+	}
+
+	public JPanel getPanelSeccion() {
+		return panelSeccion;
+	}
+
+	public JCheckBox getChckbxEconomia() {
+		return chckbxEconomia;
+	}
+
+	public JPanel getPanelCarpetaOrigen() {
+		return panelcarpetaOrigen;
+	}
+
+	public JButton getBtnAgregarCarpetaOrigen() {
+		return btnAgregarCarpetaOrigen;
+	}
+
+	public JPanel getPanelCarpetaDestino() {
+		return panelCarpetaDestino;
+	}
+
+	public JButton getBtnAgregarCarpetaDestino() {
+		return btnAgregarCarpetaDestino;
+	}
+
+	public JPanel getPanelFecha() {
+		return panelFecha;
+	}
+
+	public JSpinner getSpinnerCantDias() {
+		return spinnerCantDias;
+	}
+
+	public JPanel getPanelBotonesProcesar_Salir() {
+		return panelBotonesProcesar_Salir;
+	}
+
+	public JTextField getTextFieldCarpetaOrigen() {
+		return textFieldCarpetaOrigen;
+	}
+
+	public JTextField getTextFieldCarpetaDestino() {
+		return textFieldCarpetaDestino;
 	}
 
 	/**
@@ -73,14 +154,47 @@ public class VistaDescargas {
 		frmPagedownloader = new JFrame();
 		frmPagedownloader.setBounds(100, 100, 650, 430);
 		frmPagedownloader.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frmPagedownloader.setResizable(false);
 		frmPagedownloader.getContentPane().setLayout(null);
 		frmPagedownloader.setTitle("PageDownloader");
 		frmPagedownloader.setFont(new Font("Arial", Font.PLAIN, 12));
 
+		// MODO DESCARGA
+		panelModoDescarga = new JPanel();
+		panelModoDescarga.setSize(400, 40);
+		panelModoDescarga.setLocation(22, 10);
+		panelModoDescarga.setBorder(new EmptyBorder(5, 5, 5, 5));
+		panelModoDescarga.setLayout(null);
+		frmPagedownloader.getContentPane().add(panelModoDescarga);
+
+		JLabel lblModoDescarga = new JLabel("Modo Descarga");
+		lblModoDescarga.setFont(new Font("Arial", Font.BOLD, 14));
+		lblModoDescarga.setBounds(0, 0, 120, 22);
+		panelModoDescarga.add(lblModoDescarga);
+
+		JSeparator separatorModoDescarga = new JSeparator();
+		separatorModoDescarga.setBounds(0, 27, 500, 3);
+		panelModoDescarga.add(separatorModoDescarga);
+
+		grupoModoDescarga = new ButtonGroup();
+
+		radioBtnDescargarTapas = new JRadioButton("Tapas");
+		radioBtnDescargarTapas.setFont(new Font("Arial", Font.PLAIN, 12));
+		radioBtnDescargarTapas.setBounds(120, 0, 70, 20);
+		panelModoDescarga.add(radioBtnDescargarTapas);
+
+		radioBtnDescargarNotas = new JRadioButton("Notas");
+		radioBtnDescargarNotas.setFont(new Font("Arial", Font.PLAIN, 12));
+		radioBtnDescargarNotas.setBounds(200, 0, 70, 20);
+		panelModoDescarga.add(radioBtnDescargarNotas);
+
+		grupoModoDescarga.add(radioBtnDescargarTapas);
+		grupoModoDescarga.add(radioBtnDescargarNotas);
+
 		// DIARIO
 		panelDiario = new JPanel();
 		panelDiario.setSize(500, 40);
-		panelDiario.setLocation(22, 10);
+		panelDiario.setLocation(22, 50);
 		panelDiario.setBorder(new EmptyBorder(5, 5, 5, 5));
 		panelDiario.setLayout(null);
 		frmPagedownloader.getContentPane().add(panelDiario);
@@ -112,7 +226,7 @@ public class VistaDescargas {
 		// SECCION
 		panelSeccion = new JPanel();
 		panelSeccion.setSize(500, 40);
-		panelSeccion.setLocation(22, 60);
+		panelSeccion.setLocation(22, 90);
 		panelSeccion.setBorder(new EmptyBorder(5, 5, 5, 5));
 		panelSeccion.setLayout(null);
 		frmPagedownloader.getContentPane().add(panelSeccion);
@@ -134,7 +248,7 @@ public class VistaDescargas {
 		// CARPETA ORIGEN
 		panelcarpetaOrigen = new JPanel();
 		panelcarpetaOrigen.setSize(630, 60);
-		panelcarpetaOrigen.setLocation(22, 110);
+		panelcarpetaOrigen.setLocation(22, 130);
 		panelcarpetaOrigen.setBorder(new EmptyBorder(5, 5, 5, 5));
 		panelcarpetaOrigen.setLayout(null);
 		frmPagedownloader.getContentPane().add(panelcarpetaOrigen);
@@ -164,7 +278,7 @@ public class VistaDescargas {
 		// CARPETA DESTINO
 		panelCarpetaDestino = new JPanel();
 		panelCarpetaDestino.setSize(630, 60);
-		panelCarpetaDestino.setLocation(22, 175);
+		panelCarpetaDestino.setLocation(22, 190);
 		panelCarpetaDestino.setBorder(new EmptyBorder(5, 5, 5, 5));
 		panelCarpetaDestino.setLayout(null);
 		frmPagedownloader.getContentPane().add(panelCarpetaDestino);
@@ -191,12 +305,10 @@ public class VistaDescargas {
 		btnAgregarCarpetaDestino.setBounds(520, 30, 85, 20);
 		panelCarpetaDestino.add(btnAgregarCarpetaDestino);
 
-
-
 		// FECHA
 		panelFecha = new JPanel();
 		panelFecha.setSize(600, 40);
-		panelFecha.setLocation(22, 260);
+		panelFecha.setLocation(22, 280);
 		panelFecha.setBorder(new EmptyBorder(5, 5, 5, 5));
 		panelFecha.setLayout(null);
 		frmPagedownloader.getContentPane().add(panelFecha);
@@ -218,14 +330,12 @@ public class VistaDescargas {
 		lblCantidadDias.setBounds(270, 0, 180, 20);
 		panelFecha.add(lblCantidadDias);
 
-		spinner = new JSpinner();
-		spinner.setFont(new Font("Arial", Font.PLAIN, 12));
-		spinner.setBounds(450, 0, 70, 20);
-		panelFecha.add(spinner);
+		spinnerCantDias = new JSpinner(new SpinnerNumberModel( 1, 1, null, 1));
+		spinnerCantDias.setFont(new Font("Arial", Font.PLAIN, 12));
+		spinnerCantDias.setBounds(450, 0, 70, 20);
+		panelFecha.add(spinnerCantDias);
 
-
-
-		//BOTONES PROCESAR-SALIR
+		// BOTONES PROCESAR-SALIR
 		panelBotonesProcesar_Salir = new JPanel();
 		panelBotonesProcesar_Salir.setSize(230, 40);
 		panelBotonesProcesar_Salir.setLocation(175, 350);
@@ -233,10 +343,10 @@ public class VistaDescargas {
 		panelBotonesProcesar_Salir.setLayout(null);
 		frmPagedownloader.getContentPane().add(panelBotonesProcesar_Salir);
 
-		buttonProcesar = new JButton("Procesar");
-		buttonProcesar.setFont(new Font("Arial", Font.PLAIN, 12));
-		buttonProcesar.setBounds(10, 0, 100, 35);
-		panelBotonesProcesar_Salir.add(buttonProcesar);
+		buttonDescargar = new JButton("Descargar");
+		buttonDescargar.setFont(new Font("Arial", Font.PLAIN, 12));
+		buttonDescargar.setBounds(10, 0, 100, 35);
+		panelBotonesProcesar_Salir.add(buttonDescargar);
 
 		btnSalir = new JButton("Salir");
 		btnSalir.setFont(new Font("Arial", Font.PLAIN, 12));
@@ -244,17 +354,18 @@ public class VistaDescargas {
 		panelBotonesProcesar_Salir.add(btnSalir);
 	}
 
-	public static boolean solicitarRespuestaAUsuario(String consulta) {
+	public boolean solicitarRespuestaAUsuario(String consulta) {
 		int dialogButton = JOptionPane.showConfirmDialog(null, consulta, "Alerta", JOptionPane.YES_NO_OPTION);
 		return dialogButton == 0 ? true : false;
 	}
 
-	public static void mostrarMsjAUsuario(String msj, String title, int warningMessage) {
+	public void mostrarMsjAUsuario(String msj, String title, int warningMessage) {
 		JOptionPane.showMessageDialog(null, msj, title, warningMessage);
 	}
 
 	private void close() {
-		if (JOptionPane.showConfirmDialog(null, "¿Desea realmente salir del sistema?", "Salir del sistema", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
+		if (JOptionPane.showConfirmDialog(null, "¿Desea realmente salir del sistema?", "Salir del sistema",
+				JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
 			System.exit(0);
 	}
 }
