@@ -4,7 +4,7 @@ package app;
 
 import java.util.Date;
 
-import pagina12.DescargarNotasEconomiaPagina12;
+import servicios_Pagina12.DescargarNotasEconomiaPagina12;
 
 public class OptimizadorHilos {
 

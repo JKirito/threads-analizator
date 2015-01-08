@@ -1,7 +1,7 @@
 package app;
 
-import vista.SeleccionarDescarga;
-import controlador.controladorSeleccionarDescarga;
+import vista.VistaDescargas;
+import controlador.ControladorDescargas;
 
 public class Init {
 
@@ -10,10 +10,9 @@ public class Init {
 	 */
 	public static void main(String[] args) {
 				try {
-					SeleccionarDescarga vistaSeleccionarDescarga = new SeleccionarDescarga();
-					controladorSeleccionarDescarga controlador = new controladorSeleccionarDescarga(vistaSeleccionarDescarga);
-
-					vistaSeleccionarDescarga.setVisible(true);
+					VistaDescargas vistaDescarga = new VistaDescargas();
+					ControladorDescargas controlador = new ControladorDescargas(vistaDescarga);
+					vistaDescarga.getFrame().setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
