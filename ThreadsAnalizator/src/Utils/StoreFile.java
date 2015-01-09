@@ -34,6 +34,10 @@ public class StoreFile {
 	}
 
 
+	/**
+	 * Si el archivo a guardar existe, lo sobreescribe.
+	 * @throws IOException
+	 */
 	public void store() throws IOException{
 		File page = new File(this.path + this.nombreArchivo + this.extension);
 		Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(page), this.charset));
