@@ -1,6 +1,8 @@
 package servicios;
 
 import java.io.IOException;
+import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
 import java.util.Date;
 
 import org.jsoup.Jsoup;
@@ -52,9 +54,24 @@ public class PageDownloader {
 			Document page = null;
 			try {
 				page = Jsoup.connect(linkActual).timeout(0).get();
+				if (!diario.esValido(page)) {
+					erroresDescarga += "AL PARECER " + diario.getNombreDiario() + " NO TIENE NOTICIAS EN LA SECCIÓN "
+							+ seccion.getCodigoSeccion() + " EL DIARIO EL DIA: " + fecha + ".\r\n";
+				}
+			} catch (UnknownHostException e) {
+				erroresDescarga += "NO SE PUDO DESCARGAR EL DIARIO " + diario.getNombreDiario() + ", SECCIÓN "
+						+ seccion.getNombreSección() + " DEL DIA: " + fecha
+						+ ". ESTO PUEDE DEBERSE A UNA DESCONEXIÓN DE INTERNET.\r\n";
+				continue;
+			} catch (SocketTimeoutException e) {
+				erroresDescarga += "NO SE PUDO DESCARGAR EL DIARIO " + diario.getNombreDiario() + ", SECCIÓN "
+						+ seccion.getNombreSección() + " DEL DIA: " + fecha
+						+ ". Error por Time out.\r\n";
+				continue;
 			} catch (IOException e) {
-				erroresDescarga += "AL PARECER NO EXISTE EL DIARIO DEL DIA: " + fecha + "\r\n";
-				// e.printStackTrace();
+				erroresDescarga += "NO SE PUDO DESCARGAR EL DIARIO " + diario.getNombreDiario() + ", SECCIÓN "
+						+ seccion.getNombreSección() + " DEL DIA: " + fecha + ".\r\n";
+				e.printStackTrace();
 				continue;
 			}
 			String nombreArchivo = diario.getNombreArchivo(fecha);
