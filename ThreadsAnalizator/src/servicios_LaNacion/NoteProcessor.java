@@ -85,7 +85,7 @@ public class NoteProcessor implements Runnable {
 		File a = new File(pathAGuardar+nombreArchivo+".html//");
 		StoreFile sf = new StoreFile(pathAGuardar, ".html", doc.html(), nombreArchivo, "utf-8");
 		try {
-			sf.store();
+			sf.store(false);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
