@@ -109,7 +109,7 @@ public class ControladorDescargas implements ActionListener {
 						JOptionPane.WARNING_MESSAGE);
 			}
 
-			if(!procesar)
+			if (!procesar)
 				return;
 
 			// PROCESAR
@@ -118,7 +118,8 @@ public class ControladorDescargas implements ActionListener {
 				this.vistaDescargas.getButtonDescargar().setText("Descargando..");
 				SwingUtils.setEnableContainer(vistaDescargas.getButtonDescargar(), false);
 
-				this.mostrarMsjAUsuario("El proceso puede tardar muuuucho tiempo...", "Descargando..", JOptionPane.INFORMATION_MESSAGE);
+				this.mostrarMsjAUsuario("El proceso puede tardar muuuucho tiempo...", "Descargando..",
+						JOptionPane.INFORMATION_MESSAGE);
 				// TODO: Agregar opción de buscar cant optimizada de hilos a
 				// usar!!!
 				this.modeloDescarga.descargar();
@@ -131,8 +132,6 @@ public class ControladorDescargas implements ActionListener {
 				e1.printStackTrace();
 			}
 		}
-
-
 
 		// Guardar resultado proceso a archivo
 		// if (e.getSource() == vistaResultado.getBtnGuardar()) {
