@@ -12,6 +12,8 @@ import modelo.ModeloDescargaTapas;
 import vista.SetupGetDirVista;
 import vista.VistaDescargas;
 import Utils.SwingUtils;
+import entities.FormatoHtml;
+import entities.FormatoTexto;
 
 public class ControladorDescargas implements ActionListener {
 
@@ -161,15 +163,29 @@ public class ControladorDescargas implements ActionListener {
 	}
 
 	private void cargarDatosModoDescargaComunes() {
+		// Cargar seccion
 		if (vistaDescargas.getChckbxEconomia().isSelected()) {
 			this.modeloDescarga.setSeccionDescarga(vistaDescargas.getChckbxEconomia().getText());
 		}
+
+		// Cargar Diario
 		if (vistaDescargas.getRadioBtnLaNacion().isSelected()) {
 			this.modeloDescarga.setDiarioDescarga(vistaDescargas.getRadioBtnLaNacion().getText());
 		} else if (vistaDescargas.getRadioBtnPagina12().isSelected()) {
 			this.modeloDescarga.setDiarioDescarga(vistaDescargas.getRadioBtnPagina12().getText());
 		}
+		// Cargar formato Salida
+		if (vistaDescargas.getRadioBtnHTML().isSelected()) {
+			this.modeloDescarga.setFormatoOutput(new FormatoHtml());
+		} else if (vistaDescargas.getRadioBtnTXT().isSelected()) {
+			this.modeloDescarga.setFormatoOutput(new FormatoTexto());
+		}
+
+		// Cargar carpeta destino
 		this.modeloDescarga.setRutaDestino(vistaDescargas.getTextFieldCarpetaDestino().getText());
+
+		// Cargar opcion override
+		this.modeloDescarga.setOverride(vistaDescargas.getChckbxSobreescribir().isSelected());
 	}
 
 	private void cargarDatosModoDescargaNotas() {

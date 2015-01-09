@@ -7,7 +7,7 @@ public abstract class DiarioDigital {
 	protected String LINK;
 	protected String charsetName;
 	protected String nombrePrefijoAGuardar;
-	protected String grupoNoticias;
+	protected String nombreGrupoNoticias;
 	protected String nombreDiario;
 
 	public String getLINK() {
@@ -34,12 +34,12 @@ public abstract class DiarioDigital {
 		this.nombrePrefijoAGuardar = nombrePrefijoAGuardar;
 	}
 
-	public String getGrupoNoticias() {
-		return grupoNoticias;
+	public String getNombreGrupoNoticias() {
+		return nombreGrupoNoticias;
 	}
 
-	public void setGrupoNoticias(String grupoNoticias) {
-		this.grupoNoticias = grupoNoticias;
+	public void setNombreGrupoNoticias(String grupoNoticias) {
+		this.nombreGrupoNoticias = grupoNoticias;
 	}
 
 	public String getNombreDiario() {

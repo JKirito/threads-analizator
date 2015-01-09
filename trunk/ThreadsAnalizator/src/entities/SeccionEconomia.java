@@ -2,10 +2,10 @@ package entities;
 
 public abstract class SeccionEconomia extends Seccion{
 
-	public static String nombreSeccion = "Economía";
+	public static final String NOMBRE_SECCION = "Economía";
 
 	public SeccionEconomia() {
-		super.setNombreSección(nombreSeccion);
+		super.setNombreSección(NOMBRE_SECCION);
 	}
 
 }
