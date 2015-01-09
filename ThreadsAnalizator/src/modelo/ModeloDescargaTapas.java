@@ -7,9 +7,11 @@ import servicios.PageDownloader;
 import entities.DiarioDigital;
 import entities.EconomiaLaNacion;
 import entities.EconomiaPagina12;
+import entities.FormatoSalida;
 import entities.LaNacion;
 import entities.Pagina12;
 import entities.Seccion;
+import entities.SeccionEconomia;
 
 public class ModeloDescargaTapas extends ModeloDescarga {
 
@@ -19,8 +21,8 @@ public class ModeloDescargaTapas extends ModeloDescarga {
 	private int cantTapasDescargar;
 
 	public ModeloDescargaTapas(String rutaDestino, String modoDescarga, String diarioDescarga, String seccionDescarga,
-			Date fechaDescargaHasta, int cantTapasDescargar) {
-		super(rutaDestino, modoDescarga, diarioDescarga, seccionDescarga);
+			boolean override, FormatoSalida formatoOutput, Date fechaDescargaHasta, int cantTapasDescargar) {
+		super(rutaDestino, modoDescarga, diarioDescarga, seccionDescarga, override, formatoOutput);
 		this.fechaDescargaHasta = fechaDescargaHasta;
 		this.cantTapasDescargar = cantTapasDescargar;
 	}
@@ -52,20 +54,20 @@ public class ModeloDescargaTapas extends ModeloDescarga {
 		Seccion seccion = null;
 		if (this.getDiarioDescarga().equals(Pagina12.NOMBRE_DIARIO)) {
 			diario = new Pagina12();
-			if (this.getSeccionDescarga().equals(EconomiaPagina12.nombreSeccion)) {
+			if (this.getSeccionDescarga().equals(SeccionEconomia.NOMBRE_SECCION)) {
 				seccion = new EconomiaPagina12();
 			}
 		} else if (this.getDiarioDescarga().equals(LaNacion.NOMBRE_DIARIO)) {
 			diario = new LaNacion();
-			if (this.getSeccionDescarga().equals(EconomiaLaNacion.nombreSeccion)) {
+			if (this.getSeccionDescarga().equals(SeccionEconomia.NOMBRE_SECCION)) {
 				seccion = new EconomiaLaNacion();
 			}
 		}
 
-		String pathAGuardar = this.getRutaDestino()+File.separatorChar;
+		String pathAGuardar = this.getRutaDestino() + File.separatorChar;
 		Date fechaHasta = this.getFechaDescargaHasta();
 		int diasARecopílar = this.getCantTapasDescargar();
-		PageDownloader pd = new PageDownloader(diario, seccion, pathAGuardar, fechaHasta, diasARecopílar);
+		PageDownloader pd = new PageDownloader(diario, seccion, this.getFormatoOutput(),pathAGuardar, fechaHasta, diasARecopílar, this.isOverride());
 		pd.download();
 		System.out.println(pd.getErroresDescarga());
 	}

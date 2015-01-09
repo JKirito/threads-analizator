@@ -1,13 +1,16 @@
 package modelo;
 
+import entities.FormatoSalida;
+
 public class ModeloDescargaNotas extends ModeloDescarga{
 
 	private static final String MSJ_CARPETAORIGEN_VACIO = "Debe seleccionar la carpeta de origen";
 	private String rutaOrigen;
 
+
 	public ModeloDescargaNotas(String rutaDestino, String modoDescarga, String diarioDescarga, String seccionDescarga,
-			String rutaOrigen) {
-		super(rutaDestino, modoDescarga, diarioDescarga, seccionDescarga);
+			boolean override, FormatoSalida formatoOutput, String rutaOrigen) {
+		super(rutaDestino, modoDescarga, diarioDescarga, seccionDescarga, override, formatoOutput);
 		this.rutaOrigen = rutaOrigen;
 	}
 
