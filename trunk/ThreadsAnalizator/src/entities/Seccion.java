@@ -1,25 +1,23 @@
 package entities;
 
 public abstract class Seccion {
-	private String nombreSeccion;
-	private String nombreDiario;
+	private String codigoSeccion;
+	// private String nombreDiario;
+	private String nombreSección;
 
-	public String getNombreSeccion() {
-		return nombreSeccion;
+	public String getCodigoSeccion() {
+		return codigoSeccion;
 	}
 
-	public void setNombreSeccion(String nombreSeccion) {
-		this.nombreSeccion = nombreSeccion;
+	public void setCodigoSeccion(String nombreSeccion) {
+		this.codigoSeccion = nombreSeccion;
 	}
 
-	public String getNombreDiario() {
-		return nombreDiario;
+	public String getNombreSección() {
+		return nombreSección;
 	}
 
-	public void setNombreDiario(String nombreDiario) {
-		this.nombreDiario = nombreDiario;
+	public void setNombreSección(String nombreSección) {
+		this.nombreSección = nombreSección;
 	}
-
-
-
 }
