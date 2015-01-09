@@ -69,7 +69,7 @@ public class ModeloDescargaTapas extends ModeloDescarga {
 		int diasARecopílar = this.getCantTapasDescargar();
 		PageDownloader pd = new PageDownloader(diario, seccion, this.getFormatoOutput(),pathAGuardar, fechaHasta, diasARecopílar, this.isOverride());
 		pd.download();
-		System.out.println(pd.getErroresDescarga());
+		System.out.println("ERRORES\n"+pd.getErroresDescarga());
 	}
 
 	@Override

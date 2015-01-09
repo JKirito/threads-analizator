@@ -1,6 +1,7 @@
 package entities;
 
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 
 
 public class Pagina12 extends DiarioDigital {
@@ -10,6 +11,7 @@ public class Pagina12 extends DiarioDigital {
 	private static final String NOMBREPREFIJO_AGUARDAR = "Pagina12";
 	public static final String NOMBRE_DIARIO = "Página 12";
 	public static final String NOMBRE_GRUPO_NOTICIAS = "seccionxblanco";
+	private static String classMinirecortesEliminar = "minirecorte";
 
 	public Pagina12() {
 		super.setCharsetName(CHARSETNAME_PAGINA12);
@@ -31,6 +33,15 @@ public class Pagina12 extends DiarioDigital {
 
 	@Override
 	public boolean esValido(Document doc) {
-		return doc.getElementsByClass(this.getNombreGrupoNoticias()).first() != null;
+		Element noticias = doc.getElementsByClass(this.getNombreGrupoNoticias()).first();
+		return noticias != null && noticias.getAllElements().size() > 1;
+	}
+
+	@Override
+	public Element getSoloGrupoNoticias(Document page) {
+		// Elimino "basura"
+		page.getElementsByClass(classMinirecortesEliminar).remove();
+		// Dejo sólo lo que me importa
+		return page.getElementsByClass(this.getNombreGrupoNoticias()).first();
 	}
 }

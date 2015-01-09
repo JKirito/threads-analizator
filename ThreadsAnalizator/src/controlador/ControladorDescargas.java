@@ -82,7 +82,7 @@ public class ControladorDescargas implements ActionListener {
 			}
 		}
 
-		// Procesar
+		// DESCARGAR
 		if (e.getSource() == vistaDescargas.getButtonDescargar()) {
 			boolean procesar = true;
 			if (vistaDescargas.getRadioBtnDescargarNotas().isSelected()) {
