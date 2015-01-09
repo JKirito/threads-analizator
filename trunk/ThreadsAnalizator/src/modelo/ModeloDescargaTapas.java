@@ -5,8 +5,8 @@ import java.util.Date;
 
 import servicios.PageDownloader;
 import entities.DiarioDigital;
-import entities.EconomiaLN;
-import entities.EconomiaP12;
+import entities.EconomiaLaNacion;
+import entities.EconomiaPagina12;
 import entities.LaNacion;
 import entities.Pagina12;
 import entities.Seccion;
@@ -52,13 +52,13 @@ public class ModeloDescargaTapas extends ModeloDescarga {
 		Seccion seccion = null;
 		if (this.getDiarioDescarga().equals(Pagina12.NOMBRE_DIARIO)) {
 			diario = new Pagina12();
-			if (this.getSeccionDescarga().equals(EconomiaP12.nombreSeccion)) {
-				seccion = new EconomiaP12();
+			if (this.getSeccionDescarga().equals(EconomiaPagina12.nombreSeccion)) {
+				seccion = new EconomiaPagina12();
 			}
 		} else if (this.getDiarioDescarga().equals(LaNacion.NOMBRE_DIARIO)) {
 			diario = new LaNacion();
-			if (this.getSeccionDescarga().equals(EconomiaLN.nombreSeccion)) {
-				seccion = new EconomiaLN();
+			if (this.getSeccionDescarga().equals(EconomiaLaNacion.nombreSeccion)) {
+				seccion = new EconomiaLaNacion();
 			}
 		}
 
@@ -67,7 +67,7 @@ public class ModeloDescargaTapas extends ModeloDescarga {
 		int diasARecopílar = this.getCantTapasDescargar();
 		PageDownloader pd = new PageDownloader(diario, seccion, pathAGuardar, fechaHasta, diasARecopílar);
 		pd.download();
-		System.out.println(pd.getErroresDescarga()+"AAAAAAAAAAAAAAAAAAAa");
+		System.out.println(pd.getErroresDescarga());
 	}
 
 	@Override
