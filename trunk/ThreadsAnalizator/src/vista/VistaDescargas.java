@@ -15,10 +15,17 @@ import javax.swing.JSeparator;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 
 import com.toedter.calendar.JDateChooser;
+
+import entities.FormatoHtml;
+import entities.FormatoTexto;
+import entities.LaNacion;
+import entities.Pagina12;
+import entities.SeccionEconomia;
 
 public class VistaDescargas {
 
@@ -27,13 +34,17 @@ public class VistaDescargas {
 	private JPanel panelDiario;
 	private ButtonGroup grupoModoDescarga;
 	private ButtonGroup grupoDiario;
+	private ButtonGroup grupoOutput;
 	private JRadioButton radioBtnDescargarTapas;
 	private JRadioButton radioBtnDescargarNotas;
 	private JRadioButton radioBtnPagina12;
 	private JRadioButton radioBtnLaNacion;
+	private JRadioButton radioBtnHTML;
+	private JRadioButton radioBtnTXT;
 	private JPanel panelSeccion;
 	private JCheckBox chckbxEconomia;
-	private JPanel panelcarpetaOrigen;
+	private JCheckBox chckbxSobreescribir;
+	private JPanel panelCarpetaOrigen;
 	private JButton btnAgregarCarpetaOrigen;
 	private JPanel panelCarpetaDestino;
 	private JButton btnAgregarCarpetaDestino;
@@ -112,7 +123,7 @@ public class VistaDescargas {
 	}
 
 	public JPanel getPanelCarpetaOrigen() {
-		return panelcarpetaOrigen;
+		return panelCarpetaOrigen;
 	}
 
 	public JButton getBtnAgregarCarpetaOrigen() {
@@ -147,12 +158,24 @@ public class VistaDescargas {
 		return textFieldCarpetaDestino;
 	}
 
+	public JRadioButton getRadioBtnHTML() {
+		return radioBtnHTML;
+	}
+
+	public JRadioButton getRadioBtnTXT() {
+		return radioBtnTXT;
+	}
+
+	public JCheckBox getChckbxSobreescribir() {
+		return chckbxSobreescribir;
+	}
+
 	/**
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
 		frmPagedownloader = new JFrame();
-		frmPagedownloader.setBounds(100, 100, 650, 430);
+		frmPagedownloader.setBounds(100, 100, 650, 500);
 		frmPagedownloader.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmPagedownloader.setResizable(false);
 		frmPagedownloader.getContentPane().setLayout(null);
@@ -210,12 +233,12 @@ public class VistaDescargas {
 
 		grupoDiario = new ButtonGroup();
 
-		radioBtnPagina12 = new JRadioButton("Página 12");
+		radioBtnPagina12 = new JRadioButton(Pagina12.NOMBRE_DIARIO);
 		radioBtnPagina12.setFont(new Font("Arial", Font.PLAIN, 12));
 		radioBtnPagina12.setBounds(80, 0, 100, 20);
 		panelDiario.add(radioBtnPagina12);
 
-		radioBtnLaNacion = new JRadioButton("La Nación");
+		radioBtnLaNacion = new JRadioButton(LaNacion.NOMBRE_DIARIO);
 		radioBtnLaNacion.setFont(new Font("Arial", Font.PLAIN, 12));
 		radioBtnLaNacion.setBounds(185, 0, 100, 20);
 		panelDiario.add(radioBtnLaNacion);
@@ -240,40 +263,41 @@ public class VistaDescargas {
 		separatorSeccion.setBounds(0, 27, 500, 3);
 		panelSeccion.add(separatorSeccion);
 
-		chckbxEconomia = new JCheckBox("Economía");
+		chckbxEconomia = new JCheckBox(SeccionEconomia.NOMBRE_SECCION);
 		chckbxEconomia.setFont(new Font("Arial", Font.PLAIN, 12));
 		chckbxEconomia.setBounds(80, 0, 100, 20);
 		panelSeccion.add(chckbxEconomia);
 
 		// CARPETA ORIGEN
-		panelcarpetaOrigen = new JPanel();
-		panelcarpetaOrigen.setSize(630, 60);
-		panelcarpetaOrigen.setLocation(22, 130);
-		panelcarpetaOrigen.setBorder(new EmptyBorder(5, 5, 5, 5));
-		panelcarpetaOrigen.setLayout(null);
-		frmPagedownloader.getContentPane().add(panelcarpetaOrigen);
+		panelCarpetaOrigen = new JPanel();
+		panelCarpetaOrigen.setSize(630, 60);
+		panelCarpetaOrigen.setLocation(22, 130);
+		panelCarpetaOrigen.setBorder(new EmptyBorder(5, 5, 5, 5));
+		panelCarpetaOrigen.setLayout(null);
+		frmPagedownloader.getContentPane().add(panelCarpetaOrigen);
 
 		JLabel lblCarpetaOrigen = new JLabel("Carpeta Origen");
 		lblCarpetaOrigen.setToolTipText("Ruta donde se encuentran las \"Tapas\" html descargadas");
 		lblCarpetaOrigen.setFont(new Font("Arial", Font.BOLD, 14));
+		lblCarpetaOrigen.setToolTipText("Ruta donde se encuentran las 'Tapas' html ya descargadas");
 		lblCarpetaOrigen.setBounds(0, 0, 120, 23);
-		panelcarpetaOrigen.add(lblCarpetaOrigen);
+		panelCarpetaOrigen.add(lblCarpetaOrigen);
 
 		JSeparator separatorCarpetaOrigen = new JSeparator();
 		separatorCarpetaOrigen.setBounds(0, 25, 500, 3);
-		panelcarpetaOrigen.add(separatorCarpetaOrigen);
+		panelCarpetaOrigen.add(separatorCarpetaOrigen);
 
 		textFieldCarpetaOrigen = new JTextField();
 		textFieldCarpetaOrigen.setFont(new Font("Arial", Font.PLAIN, 12));
 		textFieldCarpetaOrigen.setEditable(false);
 		textFieldCarpetaOrigen.setColumns(10);
 		textFieldCarpetaOrigen.setBounds(0, 30, 500, 23);
-		panelcarpetaOrigen.add(textFieldCarpetaOrigen);
+		panelCarpetaOrigen.add(textFieldCarpetaOrigen);
 
 		btnAgregarCarpetaOrigen = new JButton("Agregar");
 		btnAgregarCarpetaOrigen.setFont(new Font("Arial", Font.PLAIN, 12));
 		btnAgregarCarpetaOrigen.setBounds(520, 30, 85, 20);
-		panelcarpetaOrigen.add(btnAgregarCarpetaOrigen);
+		panelCarpetaOrigen.add(btnAgregarCarpetaOrigen);
 
 		// CARPETA DESTINO
 		panelCarpetaDestino = new JPanel();
@@ -307,7 +331,7 @@ public class VistaDescargas {
 
 		// FECHA
 		panelFecha = new JPanel();
-		panelFecha.setSize(600, 40);
+		panelFecha.setSize(600, 30);
 		panelFecha.setLocation(22, 280);
 		panelFecha.setBorder(new EmptyBorder(5, 5, 5, 5));
 		panelFecha.setLayout(null);
@@ -330,15 +354,54 @@ public class VistaDescargas {
 		lblCantidadDias.setBounds(270, 0, 180, 20);
 		panelFecha.add(lblCantidadDias);
 
-		spinnerCantDias = new JSpinner(new SpinnerNumberModel( 1, 1, null, 1));
+		spinnerCantDias = new JSpinner(new SpinnerNumberModel(1, 1, null, 1));
 		spinnerCantDias.setFont(new Font("Arial", Font.PLAIN, 12));
 		spinnerCantDias.setBounds(450, 0, 70, 20);
 		panelFecha.add(spinnerCantDias);
 
-		// BOTONES PROCESAR-SALIR
+		// PANEL OPCIONES
+		JPanel panelOpciones = new JPanel();
+		panelOpciones.setLayout(null);
+		panelOpciones.setBorder(new EmptyBorder(5, 5, 5, 5));
+		panelOpciones.setBounds(22, 320, 600, 30);
+		frmPagedownloader.getContentPane().add(panelOpciones);
+
+		Label lblformatoSalida = new Label("Formato:");
+		lblformatoSalida.setFont(new Font("Arial", Font.PLAIN, 12));
+		lblformatoSalida.setBounds(0, 0, 58, 20);
+		panelOpciones.add(lblformatoSalida);
+
+		grupoOutput = new ButtonGroup();
+
+		radioBtnHTML = new JRadioButton(FormatoHtml.NOMBRE);
+		radioBtnHTML.setFont(new Font("Arial", Font.PLAIN, 12));
+		radioBtnHTML.setBounds(60, 0, 60, 20);
+		panelOpciones.add(radioBtnHTML);
+
+		radioBtnTXT = new JRadioButton(FormatoTexto.nombre);
+		radioBtnTXT.setFont(new Font("Arial", Font.PLAIN, 12));
+		radioBtnTXT.setBounds(125, 0, 60, 20);
+		panelOpciones.add(radioBtnTXT);
+
+		grupoOutput.add(radioBtnHTML);
+		grupoOutput.add(radioBtnTXT);
+
+		JSeparator separator = new JSeparator();
+		separator.setOrientation(SwingConstants.VERTICAL);
+		separator.setBounds(190, 0, 8, 20);
+		panelOpciones.add(separator);
+
+		chckbxSobreescribir = new JCheckBox("Sobreescribir");
+		chckbxSobreescribir
+				.setToolTipText("Si el archivo ya existe y se tilda esta opción, entonces sobreescribe el contenido. Sino, evita la descarga y pasa al próximo");
+		chckbxSobreescribir.setFont(new Font("Arial", Font.PLAIN, 12));
+		chckbxSobreescribir.setBounds(195, 0, 100, 20);
+		panelOpciones.add(chckbxSobreescribir);
+
+		// BOTONES DESCARGAR-SALIR
 		panelBotonesProcesar_Salir = new JPanel();
 		panelBotonesProcesar_Salir.setSize(230, 40);
-		panelBotonesProcesar_Salir.setLocation(175, 350);
+		panelBotonesProcesar_Salir.setLocation(180, 400);
 		panelBotonesProcesar_Salir.setBorder(new EmptyBorder(5, 5, 5, 5));
 		panelBotonesProcesar_Salir.setLayout(null);
 		frmPagedownloader.getContentPane().add(panelBotonesProcesar_Salir);
@@ -363,9 +426,8 @@ public class VistaDescargas {
 		JOptionPane.showMessageDialog(null, msj, title, warningMessage);
 	}
 
-	private void close() {
-		if (JOptionPane.showConfirmDialog(null, "¿Desea realmente salir del sistema?", "Salir del sistema",
-				JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
-			System.exit(0);
+	public boolean close() {
+		return JOptionPane.showConfirmDialog(null, "¿Desea realmente salir del sistema?", "Salir del sistema",
+				JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
 	}
 }

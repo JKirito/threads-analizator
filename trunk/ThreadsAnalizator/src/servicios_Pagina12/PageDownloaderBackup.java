@@ -60,7 +60,7 @@ public class PageDownloaderBackup {
 			String nombreArchivo = diario.getNombreArchivo(fecha);
 			try {
 				StoreFile sf = new StoreFile(pathAGuardar, ".html", page.html(), nombreArchivo, diario.getCharsetName());
-				sf.store();
+				sf.store(false);
 			} catch (IOException e) {
 				erroresDescarga += "ERROR AL QUERER GUARDAR EL ARCHIVO " + nombreArchivo + "\r\n";
 				// e.printStackTrace();

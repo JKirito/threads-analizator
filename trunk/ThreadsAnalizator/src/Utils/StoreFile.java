@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 
-
 public class StoreFile {
 	private String path;
 	private String extension;
@@ -15,14 +14,20 @@ public class StoreFile {
 	private String nombreArchivo;
 	private String charset;
 
-
 	/**
 	 *
-	 * @param path: ruta donde se va a guardar el archivo
-	 * @param extension: puede ser vacío [""]. En caso de agregarlo, agregar el punto '.'
-	 * @param textoAGuardar: Cadena de texto que se desea guardar en disco
-	 * @param nombreArchivo: nombre con el cual se guardará el archivo (SIN extensión)
-	 * @param charset: formato charset con el que se guardará el archivo. Ej: "utf-8"
+	 * @param path
+	 *            : ruta donde se va a guardar el archivo
+	 * @param extension
+	 *            : puede ser vacío [""]. En caso de agregarlo, agregar el punto
+	 *            '.'
+	 * @param textoAGuardar
+	 *            : Cadena de texto que se desea guardar en disco
+	 * @param nombreArchivo
+	 *            : nombre con el cual se guardará el archivo (SIN extensión)
+	 * @param charset
+	 *            : formato charset con el que se guardará el archivo. Ej:
+	 *            "utf-8"
 	 */
 	public StoreFile(String path, String extension, String textoAGuardar, String nombreArchivo, String charset) {
 		super();
@@ -33,12 +38,18 @@ public class StoreFile {
 		this.charset = charset;
 	}
 
-
 	/**
-	 * Si el archivo a guardar existe, lo sobreescribe.
+	 *
+	 * @param override: si true, sobreescribe el archivo a guardar (en caso de existir)
 	 * @throws IOException
 	 */
-	public void store() throws IOException{
+	public void store(boolean override) throws IOException {
+		if (override || !(new File(this.path + this.nombreArchivo + this.extension).exists())) {
+			store();
+		}
+	}
+
+	private void store() throws IOException {
 		File page = new File(this.path + this.nombreArchivo + this.extension);
 		Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(page), this.charset));
 		try {
@@ -46,5 +57,9 @@ public class StoreFile {
 		} finally {
 			out.close();
 		}
+	}
+
+	public static boolean existeFile(String ruta, String nombreArchivo, String extension){
+		return new File(ruta + nombreArchivo + extension).exists();
 	}
 }

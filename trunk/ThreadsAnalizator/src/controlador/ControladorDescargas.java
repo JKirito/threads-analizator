@@ -77,8 +77,9 @@ public class ControladorDescargas implements ActionListener {
 
 		// SALIR
 		if (e.getSource() == vistaDescargas.getBtnSalir()) {
-			vistaDescargas.getFrame().setVisible(false);
-			System.exit(0);
+			if(this.vistaDescargas.close()){
+				System.exit(0);
+			}
 		}
 
 		// Procesar
@@ -252,4 +253,5 @@ public class ControladorDescargas implements ActionListener {
 	private void habilitarCamposTapa() {
 		SwingUtils.setEnableContainer(vistaDescargas.getPanelFecha(), true);
 	}
+
 }
