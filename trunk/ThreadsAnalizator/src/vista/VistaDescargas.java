@@ -378,7 +378,7 @@ public class VistaDescargas {
 		radioBtnHTML.setBounds(60, 0, 60, 20);
 		panelOpciones.add(radioBtnHTML);
 
-		radioBtnTXT = new JRadioButton(FormatoTexto.nombre);
+		radioBtnTXT = new JRadioButton(FormatoTexto.NOMBRE);
 		radioBtnTXT.setFont(new Font("Arial", Font.PLAIN, 12));
 		radioBtnTXT.setBounds(125, 0, 60, 20);
 		panelOpciones.add(radioBtnTXT);

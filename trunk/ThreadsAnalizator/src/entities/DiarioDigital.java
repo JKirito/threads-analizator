@@ -1,6 +1,7 @@
 package entities;
 
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 
 public abstract class DiarioDigital {
 
@@ -55,4 +56,6 @@ public abstract class DiarioDigital {
 	public abstract String getNombreArchivo(String fecha);
 
 	public abstract boolean esValido(Document doc);
+
+	public abstract Element getSoloGrupoNoticias(Document page);
 }

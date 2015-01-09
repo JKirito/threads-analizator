@@ -1,6 +1,7 @@
 package entities;
 
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 
 
 
@@ -33,5 +34,10 @@ public class LaNacion extends DiarioDigital{
 	@Override
 	public boolean esValido(Document doc) {
 		return doc.getElementById(this.getNombreGrupoNoticias()) != null;
+	}
+
+	@Override
+	public Element getSoloGrupoNoticias(Document page) {
+		return page.getElementById(this.getNombreGrupoNoticias());
 	}
 }
