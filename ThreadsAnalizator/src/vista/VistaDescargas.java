@@ -426,8 +426,4 @@ public class VistaDescargas {
 		JOptionPane.showMessageDialog(null, msj, title, warningMessage);
 	}
 
-	public boolean close() {
-		return JOptionPane.showConfirmDialog(null, "¿Desea realmente salir del sistema?", "Salir del sistema",
-				JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
-	}
 }

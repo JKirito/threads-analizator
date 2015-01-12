@@ -46,4 +46,9 @@ public class ModeloDescargaNotas extends ModeloDescarga{
 		return errores;
 	}
 
+	@Override
+	public void run() {
+		descargar();
+	}
+
 }

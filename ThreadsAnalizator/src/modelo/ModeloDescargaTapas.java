@@ -69,7 +69,8 @@ public class ModeloDescargaTapas extends ModeloDescarga {
 		int diasARecopílar = this.getCantTapasDescargar();
 		PageDownloader pd = new PageDownloader(diario, seccion, this.getFormatoOutput(),pathAGuardar, fechaHasta, diasARecopílar, this.isOverride());
 		pd.download();
-		System.out.println("ERRORES\n"+pd.getErroresDescarga());
+		this.setWarningsDescarga(pd.getErroresDescarga());
+		this.controladorDescargas.descargaFinalizada();
 	}
 
 	@Override
@@ -89,6 +90,13 @@ public class ModeloDescargaTapas extends ModeloDescarga {
 				errores += "-" + MSJ_FECHA_FUTURO + "\n";
 		}
 		return errores;
+	}
+
+	@Override
+	public void run() {
+		this.setDescargando(true);
+		descargar();
+		this.setDescargando(false);
 	}
 
 }
