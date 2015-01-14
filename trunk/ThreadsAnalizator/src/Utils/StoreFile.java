@@ -59,7 +59,7 @@ public class StoreFile {
 		}
 	}
 
-	public static boolean existeFile(String ruta, String nombreArchivo, String extension){
+	public static boolean fileExists(String ruta, String nombreArchivo, String extension){
 		return new File(ruta + nombreArchivo + extension).exists();
 	}
 }

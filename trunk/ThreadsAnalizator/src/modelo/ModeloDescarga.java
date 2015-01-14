@@ -3,23 +3,27 @@ package modelo;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
+import servicios.PageDownloader;
+import Utils.Utils;
+import app.WorkerDownload;
 import controlador.ControladorDescargas;
 import entities.FormatoSalida;
 
-public abstract class ModeloDescarga implements Runnable {
+public abstract class ModeloDescarga {
 
 	private String rutaDestino;
 	private String modoDescarga;
 	private String diarioDescarga;
 	private String seccionDescarga;
+	private int cantTapasDescargar;
 	private boolean override;
-	private List<String> warningsDescarga;
 	private FormatoSalida formatoOutput; // Html / txt
 	protected ControladorDescargas controladorDescargas;
 	private boolean isDescargando;
+	private WorkerDownload swingWorker;
+	protected boolean descargaDetenida;
+	protected PageDownloader pageDownloader;
 	private static final String MSJ_DIARIO_DESCARGA_VACIO = "Debe seleccionar el diario del cual desea descargar";
 	private static final String MSJ_CARPETADESTINO_VACIO = "Debe seleccionar la carpeta de destino";
 	private static final String MSJ_SECCION_DESCARGA_VACIO = "Debe seleccionar la sección que desea descargar";
@@ -72,21 +76,20 @@ public abstract class ModeloDescarga implements Runnable {
 		this.seccionDescarga = seccionDescarga;
 	}
 
+	public int getCantTapasDescargar() {
+		return cantTapasDescargar;
+	}
+
+	public void setCantTapasDescargar(int cantTapasDescargar) {
+		this.cantTapasDescargar = cantTapasDescargar;
+	}
+
 	public boolean isOverride() {
 		return override;
 	}
 
 	public void setOverride(boolean override) {
 		this.override = override;
-	}
-
-	public List<String> getWarningsDescarga() {
-		return warningsDescarga;
-	}
-
-	public void setWarningsDescarga(List<String> warningsDescarga) {
-		this.warningsDescarga = new ArrayList<String>();
-		this.warningsDescarga = warningsDescarga;
 	}
 
 	public FormatoSalida getFormatoOutput() {
@@ -120,6 +123,12 @@ public abstract class ModeloDescarga implements Runnable {
 
 	public abstract void descargar();
 
+	public void detenerDescarga() {
+		this.pageDownloader.detenerEjecucion();
+		this.descargaDetenida = true;
+		this.isDescargando = false;
+	}
+
 	public abstract int getCantOptimaHilos();
 
 	public void guardarResultadoProceso(String ruta) throws IOException {
@@ -134,10 +143,7 @@ public abstract class ModeloDescarga implements Runnable {
 			throw new IOException("No tiene permiso para escribir el archivo " + ruta);
 		}
 		FileWriter outputFile = new FileWriter(file);
-		String resultadoProceso = "";
-		for (String e : this.warningsDescarga) {
-			resultadoProceso += e;
-		}
+		String resultadoProceso = getInformeDescarga();
 		outputFile.write(resultadoProceso);
 		outputFile.close();
 		// Verifico que exista
@@ -147,11 +153,36 @@ public abstract class ModeloDescarga implements Runnable {
 
 	}
 
+	public String getInformeDescarga() {
+		String informe = "INFORME DESCARGA: "
+				+ (this.descargaDetenida ? "La descarga fue detenida.\r\n" : "Descargas Finalizada con éxito.\r\n");
+		informe += "\r\nDESCARGAS REALIZADAS: " + this.pageDownloader.getDescargasRealizadas() + "\r\n";
+		informe += "\r\nDESCARGAS NO NECESARIAS (YA EXISTÍA EL ARCHIVO): "
+				+ this.pageDownloader.getDescargasNoNecesarias() + "\r\n";
+		informe += "\r\nDESCARGAS FALLIDAS: " + this.pageDownloader.getDescargasFallidas() + "\r\n";
+		informe += this.pageDownloader.getErroresDescarga().isEmpty() ? "" : "\r\n\r\nInfo Adicional por descargas fallidas: " + "\r\n\r\n"
+				+ Utils.stringListAString(this.pageDownloader.getErroresDescarga()) + "\r\n";
+
+		return informe;
+	}
+
 	public void setControlador(ControladorDescargas controladorDescargas) {
 		this.controladorDescargas = controladorDescargas;
 	}
 
 	public boolean isDescargando() {
 		return this.isDescargando;
+	}
+
+	public WorkerDownload getSwingWorker() {
+		return swingWorker;
+	}
+
+	public void setSwingWorker(WorkerDownload downloader) {
+		this.swingWorker = downloader;
+	}
+
+	public boolean isDescargaDetenida() {
+		return descargaDetenida;
 	}
 }

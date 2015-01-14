@@ -28,7 +28,11 @@ public class ModeloDescargaNotas extends ModeloDescarga{
 
 	@Override
 	public void descargar() {
+		this.setDescargando(true);
 		System.out.println("DESCARGAR NOTAS!!!");
+
+
+		this.setDescargando(false);
 	}
 
 	@Override
@@ -44,11 +48,6 @@ public class ModeloDescargaNotas extends ModeloDescarga{
 			errores += "-" + MSJ_CARPETAORIGEN_VACIO + "\n";
 		}
 		return errores;
-	}
-
-	@Override
-	public void run() {
-		descargar();
 	}
 
 }

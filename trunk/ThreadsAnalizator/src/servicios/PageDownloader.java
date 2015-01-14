@@ -6,6 +6,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Observable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -22,7 +23,7 @@ import entities.FormatoSalida;
 import entities.FormatoTexto;
 import entities.Seccion;
 
-public class PageDownloader {
+public class PageDownloader extends Observable {
 
 	private DiarioDigital diario;
 	private Seccion seccion;
@@ -32,7 +33,26 @@ public class PageDownloader {
 	private int cantDiasARecopilar;
 	private List<String> erroresDescarga = new ArrayList<String>();
 	private boolean override;
-	private Integer threads_number = 20; // Por defecto uso 10 hilos
+	private Integer threads_number = 20; // Por defecto uso 20 hilos
+	/**
+	 * Contador para todas las descargas - Utilzado para JProgress
+	 */
+	private int descargasARealizar = 0;
+	/**
+	 * Contador para las descargas que realmente se descargaron
+	 */
+	private int descargasRealizadas = 0;
+	/**
+	 * Contador para las descargas que no fueron necesarias porque ya existían
+	 * los archivos
+	 */
+	private int descargasNoNecesarias = 0;
+	/**
+	 * Contador para las descargas fallidas-No realizadas
+	 */
+	private int descargasFallidas = 0;
+	private ExecutorService executor;
+	private boolean detener = false;
 
 	public PageDownloader() {
 		System.out.println("PAGEDONWLOader");
@@ -48,6 +68,7 @@ public class PageDownloader {
 		this.fechaDate = fechaHasta;
 		this.cantDiasARecopilar = diasARecopílar;
 		this.override = override;
+		this.executor = Executors.newFixedThreadPool(threads_number);// TODO!!!!!!!!
 	}
 
 	public PageDownloader(DiarioDigital diario, Seccion seccion, FormatoSalida formatoSalida, String pathAGuardar,
@@ -60,7 +81,7 @@ public class PageDownloader {
 		this.fechaDate = fechaHasta;
 		this.cantDiasARecopilar = diasARecopílar;
 		this.override = override;
-		this.threads_number = numeroHilos;
+		// this.threads_number = numeroHilos;
 	}
 
 	public List<String> getErroresDescarga() {
@@ -79,9 +100,17 @@ public class PageDownloader {
 		@Override
 		public void run() {
 			String nombreArchivo = diario.getNombreArchivo(fecha);
-
+			descargasARealizar++;
+			setChanged();
+			notifyObservers(descargasARealizar);
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e1) {
+				e1.printStackTrace();
+			}
 			if (!override) {
-				if (StoreFile.existeFile(pathAGuardar, nombreArchivo, formatoSalida.getExtension())) {
+				if (StoreFile.fileExists(pathAGuardar, nombreArchivo, formatoSalida.getExtension())) {
+					descargasNoNecesarias++;
 					return;
 				}
 			}
@@ -90,22 +119,26 @@ public class PageDownloader {
 			try {
 				page = Jsoup.connect(linkActual).timeout(0).get();
 				if (!diario.esValido(page)) {
-					erroresDescarga.add("AL PARECER " + diario.getNombreDiario() + " NO TIENE NOTICIAS EN LA SECCIÓN "
-							+ seccion.getNombreSección() + " DEL DIA: " + fecha + ".\r\n");
+					erroresDescarga.add("Al parecer " + diario.getNombreDiario() + " no tiene noticias en la sección "
+							+ seccion.getNombreSección() + " del día: " + fecha + ".\r\n");
+					descargasFallidas++;
 					return;
 				}
 			} catch (UnknownHostException e) {
-				erroresDescarga.add("NO SE PUDO DESCARGAR EL DIARIO " + diario.getNombreDiario() + ", SECCIÓN "
-						+ seccion.getNombreSección() + " DEL DIA: " + fecha
-						+ ". ESTO PUEDE DEBERSE A UNA DESCONEXIÓN DE INTERNET.\r\n");
+				erroresDescarga.add("No se pudo descargar el diario " + diario.getNombreDiario() + ", sección "
+						+ seccion.getNombreSección() + " del día: " + fecha
+						+ ". Esto puede deberse a una desconexión de internet.\r\n");
+				descargasFallidas++;
 				return;
 			} catch (SocketTimeoutException e) {
-				erroresDescarga.add("NO SE PUDO DESCARGAR EL DIARIO " + diario.getNombreDiario() + ", SECCIÓN "
-						+ seccion.getNombreSección() + " DEL DIA: " + fecha + ". Error por Time out.\r\n");
+				erroresDescarga.add("No se pudo descargar el diario " + diario.getNombreDiario() + ", sección "
+						+ seccion.getNombreSección() + " del día: " + fecha + ". Error por Time out.\r\n");
+				descargasFallidas++;
 				return;
 			} catch (IOException e) {
-				erroresDescarga.add("NO SE PUDO DESCARGAR EL DIARIO " + diario.getNombreDiario() + ", SECCIÓN "
-						+ seccion.getNombreSección() + " DEL DIA: " + fecha + ".\r\n");
+				erroresDescarga.add("No se pudo descargar el diario " + diario.getNombreDiario() + ", sección "
+						+ seccion.getNombreSección() + " del día: " + fecha + ".\r\n");
+				descargasFallidas++;
 				return;
 			}
 
@@ -124,27 +157,27 @@ public class PageDownloader {
 				StoreFile sf = new StoreFile(pathAGuardar, formatoSalida.getExtension(), datosAGuardar, nombreArchivo,
 						diario.getCharsetName());
 				sf.store(override);
+				descargasRealizadas++;
 			} catch (IOException e) {
 				erroresDescarga.add("ERROR AL QUERER GUARDAR EL ARCHIVO " + nombreArchivo + "\r\n");
 				// e.printStackTrace();
 			}
-
 		}
 	}
 
 	public void download() {
-		ExecutorService executor = Executors.newFixedThreadPool(threads_number);
-		for (int i = cantDiasARecopilar; i > 0; i--) {
+		for (int i = cantDiasARecopilar; i > 0 && !detener; i--) {
 			// Para que empiece a restar después de descargar el primer día
 			if (i != cantDiasARecopilar) {
 				fechaDate = Utils.sumarRestarDiasFecha(fechaDate, -1);
 			}
-			String fecha = Utils.dtoYYYY_MM_DD(fechaDate);
+			String fecha = diario.getFechaConFormato(fechaDate);
 			String linkActual = diario.armarLinkActual(fecha, seccion);
 
 			ThreadDownload newDownload = new ThreadDownload(linkActual, fecha);
 
-			while (((ThreadPoolExecutor) executor).getActiveCount() == threads_number) {
+			while (((ThreadPoolExecutor) executor).getActiveCount() == ((ThreadPoolExecutor) executor)
+					.getCorePoolSize()) {
 				try {
 					Thread.sleep(300);
 				} catch (InterruptedException e) {
@@ -154,7 +187,7 @@ public class PageDownloader {
 			}
 			executor.submit(newDownload);
 		}
-		//Hasta que no termine de descargar todos, que espere..
+		// Hasta que no termine de descargar todos, que espere..
 		while (((ThreadPoolExecutor) executor).getActiveCount() != 0) {
 			try {
 				Thread.sleep(1000);
@@ -163,6 +196,30 @@ public class PageDownloader {
 				e.printStackTrace();
 			}
 		}
+		if (detener) {
+			detener = false;
+		}
+
+	}
+
+	public int getDescargasARealizar() {
+		return descargasARealizar;
+	}
+
+	public int getDescargasRealizadas() {
+		return descargasRealizadas;
+	}
+
+	public int getDescargasNoNecesarias() {
+		return descargasNoNecesarias;
+	}
+
+	public int getDescargasFallidas() {
+		return descargasFallidas;
+	}
+
+	public void detenerEjecucion() {
+		this.detener = true;
 	}
 
 }
