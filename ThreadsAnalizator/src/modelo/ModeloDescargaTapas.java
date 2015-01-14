@@ -18,13 +18,11 @@ public class ModeloDescargaTapas extends ModeloDescarga {
 	private static final String MSJ_FECHA_VACIO = "Debe completar la fecha hasta donde descargar las tapas";
 	private static final String MSJ_FECHA_FUTURO = "La fecha máxima es la de hoy, no puedes descargar lo que no existe!";
 	private Date fechaDescargaHasta;
-	private int cantTapasDescargar;
 
 	public ModeloDescargaTapas(String rutaDestino, String modoDescarga, String diarioDescarga, String seccionDescarga,
 			boolean override, FormatoSalida formatoOutput, Date fechaDescargaHasta, int cantTapasDescargar) {
 		super(rutaDestino, modoDescarga, diarioDescarga, seccionDescarga, override, formatoOutput);
 		this.fechaDescargaHasta = fechaDescargaHasta;
-		this.cantTapasDescargar = cantTapasDescargar;
 	}
 
 	public ModeloDescargaTapas() {
@@ -39,16 +37,10 @@ public class ModeloDescargaTapas extends ModeloDescarga {
 		this.fechaDescargaHasta = fechaDescargaHasta;
 	}
 
-	public int getCantTapasDescargar() {
-		return cantTapasDescargar;
-	}
-
-	public void setCantTapasDescargar(int cantTapasDescargar) {
-		this.cantTapasDescargar = cantTapasDescargar;
-	}
-
 	@Override
 	public void descargar() {
+		this.setDescargando(true);
+		this.descargaDetenida = false;
 		System.out.println("Descargar TAPAS!!!!!!!!!!!!!!");
 		DiarioDigital diario = null;
 		Seccion seccion = null;
@@ -67,9 +59,11 @@ public class ModeloDescargaTapas extends ModeloDescarga {
 		String pathAGuardar = this.getRutaDestino() + File.separatorChar;
 		Date fechaHasta = this.getFechaDescargaHasta();
 		int diasARecopílar = this.getCantTapasDescargar();
-		PageDownloader pd = new PageDownloader(diario, seccion, this.getFormatoOutput(),pathAGuardar, fechaHasta, diasARecopílar, this.isOverride());
-		pd.download();
-		this.setWarningsDescarga(pd.getErroresDescarga());
+
+		this.pageDownloader = new PageDownloader(diario, seccion, this.getFormatoOutput(),pathAGuardar, fechaHasta, diasARecopílar, this.isOverride());
+		this.pageDownloader.addObserver(this.getSwingWorker());
+		this.pageDownloader.download();
+		this.setDescargando(false);
 		this.controladorDescargas.descargaFinalizada();
 	}
 
@@ -92,11 +86,5 @@ public class ModeloDescargaTapas extends ModeloDescarga {
 		return errores;
 	}
 
-	@Override
-	public void run() {
-		this.setDescargando(true);
-		descargar();
-		this.setDescargando(false);
-	}
 
 }

@@ -1,7 +1,11 @@
 package entities;
 
+import java.util.Date;
+
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+
+import Utils.Utils;
 
 
 
@@ -23,7 +27,7 @@ public class LaNacion extends DiarioDigital{
 
 	@Override
 	public String armarLinkActual(String fecha, Seccion seccion) {
-		return LINK_LANACION + fecha + seccion.getCodigoSeccion() + ".html";
+		return LINK_LANACION + fecha + seccion.getCodigoSeccion();
 	}
 
 	@Override
@@ -39,5 +43,10 @@ public class LaNacion extends DiarioDigital{
 	@Override
 	public Element getSoloGrupoNoticias(Document page) {
 		return page.getElementById(this.getNombreGrupoNoticias());
+	}
+
+	@Override // formato es dd/MM/yyyy
+	public String getFechaConFormato(Date fechaDate) {
+		return Utils.dtoDD_MM_YYYY(fechaDate);
 	}
 }

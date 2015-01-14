@@ -1,10 +1,15 @@
 package vista;
 
+import java.awt.Font;
+
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
 public class VistaResultadoDescarga extends JFrame {
@@ -15,6 +20,9 @@ public class VistaResultadoDescarga extends JFrame {
 	private JButton btnCerrar;
 	private JScrollPane scrollPane;
 	private JTextArea textArea;
+	private JPanel panelProgreso;
+	private JProgressBar progressBar;
+	private JLabel lblProgreso;
 
 	public JButton getBtnGuardar() {
 		return btnGuardar;
@@ -28,12 +36,24 @@ public class VistaResultadoDescarga extends JFrame {
 		return textArea;
 	}
 
+	public JPanel getPanelProgreso() {
+		return panelProgreso;
+	}
+
+	public JProgressBar getProgressBar() {
+		return progressBar;
+	}
+
+	public JLabel getLblProgreso() {
+		return lblProgreso;
+	}
+
 	/**
 	 * Create the frame.
 	 */
 	public VistaResultadoDescarga() {
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		setBounds(100, 100, 600, 380);
+		setBounds(100, 100, 600, 500);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setBounds(10, 11, 600, 265);
@@ -42,18 +62,32 @@ public class VistaResultadoDescarga extends JFrame {
 		setTitle("R");
 
 		btnGuardar = new JButton("Guardar");
-		btnGuardar.setBounds(121, 291, 95, 23);
+		btnGuardar.setBounds(150, 406, 95, 23);
 		contentPane.add(btnGuardar);
 
 		btnCerrar = new JButton("Cerrar");
-		btnCerrar.setBounds(281, 291, 89, 23);
+		btnCerrar.setBounds(283, 406, 89, 23);
 		contentPane.add(btnCerrar);
-
 
 		textArea = new JTextArea();
 
 		scrollPane = new JScrollPane(textArea);
-		scrollPane.setBounds(0, 0, 600, 265);
+		scrollPane.setBounds(0, 100, 580, 250);
 		contentPane.add(scrollPane);
+
+		panelProgreso = new JPanel();
+		panelProgreso.setBounds(10, 0, 550, 70);
+		panelProgreso.setLayout(null);
+		contentPane.add(panelProgreso);
+
+		progressBar = new JProgressBar();
+		progressBar.setBounds(25, 10, 500, 30);
+		panelProgreso.add(progressBar);
+
+		lblProgreso = new JLabel("0%");
+		lblProgreso.setFont(new Font("Arial", Font.BOLD, 12));
+		lblProgreso.setHorizontalAlignment(SwingConstants.CENTER);
+		lblProgreso.setBounds(150, 43, 250, 15);
+		panelProgreso.add(lblProgreso);
 	}
 }

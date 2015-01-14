@@ -1,7 +1,11 @@
 package entities;
 
+import java.util.Date;
+
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+
+import Utils.Utils;
 
 
 public class Pagina12 extends DiarioDigital {
@@ -43,5 +47,10 @@ public class Pagina12 extends DiarioDigital {
 		page.getElementsByClass(classMinirecortesEliminar).remove();
 		// Dejo sólo lo que me importa
 		return page.getElementsByClass(this.getNombreGrupoNoticias()).first();
+	}
+
+	@Override // Formato es yyyy-MM-dd
+	public String getFechaConFormato(Date fechaDate) {
+		return Utils.dtoYYYY_MM_DD(fechaDate);
 	}
 }

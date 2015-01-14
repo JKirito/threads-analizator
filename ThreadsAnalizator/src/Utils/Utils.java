@@ -3,6 +3,7 @@ package Utils;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 public class Utils {
 
@@ -47,6 +48,14 @@ public class Utils {
 		// numero de días a añadir, o restar en caso de días<0
 		calendar.add(Calendar.DAY_OF_YEAR, dias);
 		return calendar.getTime();
+	}
+
+	public static String stringListAString(List<String> stringList) {
+		String string = "";
+		for (String e : stringList) {
+			string += e;
+		}
+		return string;
 	}
 
 }

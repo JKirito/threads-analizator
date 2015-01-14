@@ -3,8 +3,7 @@ package controlador;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.Date;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -16,6 +15,7 @@ import vista.SetupGetDirVista;
 import vista.VistaDescargas;
 import vista.VistaResultadoDescarga;
 import Utils.SwingUtils;
+import app.WorkerDownload;
 import entities.FormatoHtml;
 import entities.FormatoTexto;
 
@@ -138,12 +138,19 @@ public class ControladorDescargas implements ActionListener {
 				this.modeloDescarga.setControlador(this);
 				resultadoDescargas.setTitle("Descargando...");
 				resultadoDescargas.getTextArea().setText("");
+				resultadoDescargas.getBtnCerrar().setText("Cancelar");
+				resultadoDescargas.getBtnGuardar().setVisible(false);
 				resultadoDescargas.setVisible(true);
 
-				// Para que se quede descargando y no quede congelada la
+				WorkerDownload downloader = new WorkerDownload(this.resultadoDescargas.getLblProgreso(),
+						this.resultadoDescargas.getProgressBar(), modeloDescarga);
+				modeloDescarga.setSwingWorker(downloader);
+				downloader.execute();
+				// Para que comience a descargar y no quede congelada la
 				// pantalla
-				ExecutorService executor = Executors.newFixedThreadPool(1);
-				executor.submit((ModeloDescargaTapas) modeloDescarga);
+				// ExecutorService executor = Executors.newFixedThreadPool(1);
+				// executor.submit((ModeloDescargaTapas) modeloDescarga);
+				// ((ModeloDescargaTapas) modeloDescarga).descargar();
 
 			} catch (Exception e1) {
 				mostrarMsjAUsuario(e1.getMessage(), "Error al procesar", JOptionPane.ERROR_MESSAGE);
@@ -157,6 +164,9 @@ public class ControladorDescargas implements ActionListener {
 			SetupGetDirVista mkdir = new SetupGetDirVista(null, true, false);
 			int returnVal = mkdir.getJFileChooser1().showSaveDialog(null);
 			String rutaArchivo = mkdir.getSelected().getAbsolutePath();
+			if (rutaArchivo == null) {
+				return;
+			}
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
 				if (new File(rutaArchivo).isFile() && new File(rutaArchivo).exists()) {
 					mostrarMsjAUsuario("Ya existe un archivo con ese nombre", "Archivo existente",
@@ -164,8 +174,8 @@ public class ControladorDescargas implements ActionListener {
 				} else {
 					try {
 						this.modeloDescarga.guardarResultadoProceso(rutaArchivo);
-						mostrarMsjAUsuario("El archivo se guardó correctamente", "Operacion completada",
-								JOptionPane.INFORMATION_MESSAGE);
+						mostrarMsjAUsuario("El archivo " + rutaArchivo + " se guardó correctamente",
+								"Operacion completada", JOptionPane.INFORMATION_MESSAGE);
 					} catch (Exception e1) {
 						mostrarMsjAUsuario(e1.getMessage(), "Error al guardar", JOptionPane.ERROR_MESSAGE);
 					}
@@ -175,7 +185,17 @@ public class ControladorDescargas implements ActionListener {
 
 		// CERRAR
 		if (e.getSource() == resultadoDescargas.getBtnCerrar()) {
-			resultadoDescargas.dispose();
+			boolean salir = false;
+			if (this.modeloDescarga.isDescargando()) {
+				salir = this.vistaDescargas.solicitarRespuestaAUsuario("¿Desea detener las descargas en proceso?");
+			} else {
+				resultadoDescargas.dispose();
+			}
+			if (salir) {
+				this.modeloDescarga.detenerDescarga();
+				// resultadoDescargas.dispose();
+			}
+
 		}
 	}
 
@@ -201,6 +221,9 @@ public class ControladorDescargas implements ActionListener {
 		// Cargar carpeta destino
 		this.modeloDescarga.setRutaDestino(vistaDescargas.getTextFieldCarpetaDestino().getText());
 
+		// Cargar cantidad de tapas
+		this.modeloDescarga.setCantTapasDescargar((Integer) vistaDescargas.getSpinnerCantDias().getValue());
+
 		// Cargar opcion override
 		this.modeloDescarga.setOverride(vistaDescargas.getChckbxSobreescribir().isSelected());
 	}
@@ -212,8 +235,6 @@ public class ControladorDescargas implements ActionListener {
 
 	private void cargarDatosModoDescargaTapas() {
 		cargarDatosModoDescargaComunes();
-		((ModeloDescargaTapas) this.modeloDescarga).setCantTapasDescargar((Integer) vistaDescargas.getSpinnerCantDias()
-				.getValue());
 		((ModeloDescargaTapas) this.modeloDescarga).setFechaDescargaHasta(vistaDescargas.getDateChooser().getDate());
 	}
 
@@ -248,6 +269,13 @@ public class ControladorDescargas implements ActionListener {
 			this.deshabilitarCamposTapa();
 		}
 
+		this.vistaDescargas.getRadioBtnDescargarTapas().setSelected(true);
+		this.vistaDescargas.getRadioBtnPagina12().setSelected(true);
+		this.vistaDescargas.getChckbxEconomia().setSelected(true);
+		this.vistaDescargas.getTextFieldCarpetaDestino().setText("/home/pruebahadoop/Descargas/Pruebaaa");
+		this.vistaDescargas.getRadioBtnHTML().setSelected(true);
+		this.vistaDescargas.getDateChooser().setDate(new Date());
+		this.vistaDescargas.getSpinnerCantDias().setValue(500);
 		// TODO: podría guardar las últimas opciones utilizadas como
 		// predeterminado
 
@@ -275,13 +303,11 @@ public class ControladorDescargas implements ActionListener {
 
 	public void descargaFinalizada() {
 		SwingUtils.setEnableContainer(this.vistaDescargas.getFrame(), true);
-		this.resultadoDescargas.setTitle("Descarga Finalizada");
-		if (!this.modeloDescarga.getWarningsDescarga().isEmpty()) {
-			this.resultadoDescargas.getTextArea().setText(this.modeloDescarga.getWarningsDescarga().toString());
-		} else {
-			this.resultadoDescargas.getBtnGuardar().setVisible(false);
-			this.resultadoDescargas.getTextArea().setText("Ha finalizado la descarga correctamente");
-		}
+		String msjDescarga = this.modeloDescarga.isDescargaDetenida() ? "Detenido" : "Descarga Finalizada";
+		this.resultadoDescargas.setTitle(msjDescarga);
+		resultadoDescargas.getBtnCerrar().setText("Cerrar");
+		this.resultadoDescargas.getTextArea().setText(this.modeloDescarga.getInformeDescarga().toString());
+		this.resultadoDescargas.getBtnGuardar().setVisible(true);
 	}
 
 }
