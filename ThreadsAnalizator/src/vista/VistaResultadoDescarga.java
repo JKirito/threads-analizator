@@ -54,6 +54,7 @@ public class VistaResultadoDescarga extends JFrame {
 	public VistaResultadoDescarga() {
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		setBounds(100, 100, 600, 500);
+		setResizable(false);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setBounds(10, 11, 600, 265);

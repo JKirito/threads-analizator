@@ -5,8 +5,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import servicios.PageDownloader;
+import servicios.WorkerDownload;
 import Utils.Utils;
-import app.WorkerDownload;
 import controlador.ControladorDescargas;
 import entities.FormatoSalida;
 
@@ -161,7 +161,7 @@ public abstract class ModeloDescarga {
 				+ this.pageDownloader.getDescargasNoNecesarias() + "\r\n";
 		informe += "\r\nDESCARGAS FALLIDAS: " + this.pageDownloader.getDescargasFallidas() + "\r\n";
 		informe += this.pageDownloader.getErroresDescarga().isEmpty() ? "" : "\r\n\r\nInfo Adicional por descargas fallidas: " + "\r\n\r\n"
-				+ Utils.stringListAString(this.pageDownloader.getErroresDescarga()) + "\r\n";
+				+ Utils.stringListToString(this.pageDownloader.getErroresDescarga(), "-") + "\r\n";
 
 		return informe;
 	}

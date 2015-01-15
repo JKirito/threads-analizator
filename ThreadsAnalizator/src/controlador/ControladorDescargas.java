@@ -11,11 +11,11 @@ import javax.swing.JOptionPane;
 import modelo.ModeloDescarga;
 import modelo.ModeloDescargaNotas;
 import modelo.ModeloDescargaTapas;
+import servicios.WorkerDownload;
 import vista.SetupGetDirVista;
 import vista.VistaDescargas;
 import vista.VistaResultadoDescarga;
 import Utils.SwingUtils;
-import app.WorkerDownload;
 import entities.FormatoHtml;
 import entities.FormatoTexto;
 
@@ -309,5 +309,6 @@ public class ControladorDescargas implements ActionListener {
 		this.resultadoDescargas.getTextArea().setText(this.modeloDescarga.getInformeDescarga().toString());
 		this.resultadoDescargas.getBtnGuardar().setVisible(true);
 	}
-
+//TODO: Agregar!!!!!! si elige "LA nacion" entonces agregar al path "/lanacion/",
+		// si elige p12, agregrar /pag12/ si NO existe esa carpeta!!!
 }

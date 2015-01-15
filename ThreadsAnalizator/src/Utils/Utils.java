@@ -50,10 +50,10 @@ public class Utils {
 		return calendar.getTime();
 	}
 
-	public static String stringListAString(List<String> stringList) {
+	public static String stringListToString(List<String> stringList, String simbolo) {
 		String string = "";
 		for (String e : stringList) {
-			string += e;
+			string += simbolo+e;
 		}
 		return string;
 	}
