@@ -1,8 +1,9 @@
-package app;
+package servicios;
 
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.swing.JLabel;
 import javax.swing.JProgressBar;
@@ -61,6 +62,9 @@ public class WorkerDownload extends SwingWorker<Void, Integer> implements Observ
 
 	@Override
 	public void update(Observable o, Object arg) {
-		publish((Integer) arg);
+		if(arg == null){
+			this.lblProgreso.setText("Deteniendo... ");
+		}
+		publish(((AtomicInteger) arg).intValue());
 	}
 }

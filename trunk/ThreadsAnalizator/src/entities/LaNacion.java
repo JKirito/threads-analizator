@@ -32,7 +32,7 @@ public class LaNacion extends DiarioDigital{
 
 	@Override
 	public String getNombreArchivo(String fecha) {
-		return this.nombrePrefijoAGuardar + "_" + (fecha.contains("//") ? fecha.replace("/", "-"): "");
+		return this.nombrePrefijoAGuardar + "_" + (fecha.contains("/") ? fecha.replace("/", "-") : fecha);
 	}
 
 	@Override

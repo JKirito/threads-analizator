@@ -10,6 +10,7 @@ import java.util.Observable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -37,26 +38,29 @@ public class PageDownloader extends Observable {
 	/**
 	 * Contador para todas las descargas - Utilzado para JProgress
 	 */
-	private int descargasARealizar = 0;
+	private AtomicInteger descargasARealizar = new AtomicInteger(0);
 	/**
 	 * Contador para las descargas que realmente se descargaron
 	 */
-	private int descargasRealizadas = 0;
+	private AtomicInteger descargasRealizadas = new AtomicInteger(0);
 	/**
 	 * Contador para las descargas que no fueron necesarias porque ya existían
 	 * los archivos
 	 */
-	private int descargasNoNecesarias = 0;
+	private AtomicInteger descargasNoNecesarias = new AtomicInteger(0);
 	/**
 	 * Contador para las descargas fallidas-No realizadas
 	 */
-	private int descargasFallidas = 0;
+	private AtomicInteger descargasFallidas = new AtomicInteger(0);
+	/**
+	 * Encargado de llevar a cabo el pool de Threads, c/u a descargar algo
+	 * diferente
+	 */
 	private ExecutorService executor;
+	/**
+	 * Si true, detiene la descarga
+	 */
 	private boolean detener = false;
-
-	public PageDownloader() {
-		System.out.println("PAGEDONWLOader");
-	}
 
 	public PageDownloader(DiarioDigital diario, Seccion seccion, FormatoSalida formatoSalida, String pathAGuardar,
 			Date fechaHasta, int diasARecopílar, boolean override) {
@@ -100,45 +104,64 @@ public class PageDownloader extends Observable {
 		@Override
 		public void run() {
 			String nombreArchivo = diario.getNombreArchivo(fecha);
-			descargasARealizar++;
+			descargasARealizar.incrementAndGet();
+
+			// Notificar avance de descargas para el Jprogress
 			setChanged();
 			notifyObservers(descargasARealizar);
+
+			// Doy un pequeño tiempo para que se actualice el contador del
+			// Jprogress
 			try {
-				Thread.sleep(100);
+				Thread.sleep(10);
 			} catch (InterruptedException e1) {
 				e1.printStackTrace();
 			}
+
 			if (!override) {
 				if (StoreFile.fileExists(pathAGuardar, nombreArchivo, formatoSalida.getExtension())) {
-					descargasNoNecesarias++;
+					descargasNoNecesarias.incrementAndGet();
 					return;
 				}
 			}
 
 			Document page = null;
+
+			// Verifico que tenga que seguir ejecutandose o detener la ejecución
+			// del hilo actual
+			if (detener) {
+				return;
+			}
+
 			try {
 				page = Jsoup.connect(linkActual).timeout(0).get();
 				if (!diario.esValido(page)) {
 					erroresDescarga.add("Al parecer " + diario.getNombreDiario() + " no tiene noticias en la sección "
 							+ seccion.getNombreSección() + " del día: " + fecha + ".\r\n");
-					descargasFallidas++;
+					descargasFallidas.incrementAndGet();
 					return;
 				}
 			} catch (UnknownHostException e) {
 				erroresDescarga.add("No se pudo descargar el diario " + diario.getNombreDiario() + ", sección "
 						+ seccion.getNombreSección() + " del día: " + fecha
 						+ ". Esto puede deberse a una desconexión de internet.\r\n");
-				descargasFallidas++;
+				descargasFallidas.incrementAndGet();
 				return;
 			} catch (SocketTimeoutException e) {
 				erroresDescarga.add("No se pudo descargar el diario " + diario.getNombreDiario() + ", sección "
 						+ seccion.getNombreSección() + " del día: " + fecha + ". Error por Time out.\r\n");
-				descargasFallidas++;
+				descargasFallidas.incrementAndGet();
 				return;
 			} catch (IOException e) {
 				erroresDescarga.add("No se pudo descargar el diario " + diario.getNombreDiario() + ", sección "
 						+ seccion.getNombreSección() + " del día: " + fecha + ".\r\n");
-				descargasFallidas++;
+				descargasFallidas.incrementAndGet();
+				return;
+			}
+
+			// Verifico que tenga que seguir ejecutandose o detener la ejecución
+			// del hilo actual
+			if (detener) {
 				return;
 			}
 
@@ -153,14 +176,15 @@ public class PageDownloader extends Observable {
 				datosAGuardar = tapas.text();
 			}
 
+			descargasRealizadas.incrementAndGet();
+
 			try {
 				StoreFile sf = new StoreFile(pathAGuardar, formatoSalida.getExtension(), datosAGuardar, nombreArchivo,
 						diario.getCharsetName());
 				sf.store(override);
-				descargasRealizadas++;
 			} catch (IOException e) {
 				erroresDescarga.add("ERROR AL QUERER GUARDAR EL ARCHIVO " + nombreArchivo + "\r\n");
-				// e.printStackTrace();
+				descargasFallidas.incrementAndGet();
 			}
 		}
 	}
@@ -202,19 +226,19 @@ public class PageDownloader extends Observable {
 
 	}
 
-	public int getDescargasARealizar() {
+	public AtomicInteger getDescargasARealizar() {
 		return descargasARealizar;
 	}
 
-	public int getDescargasRealizadas() {
+	public AtomicInteger getDescargasRealizadas() {
 		return descargasRealizadas;
 	}
 
-	public int getDescargasNoNecesarias() {
+	public AtomicInteger getDescargasNoNecesarias() {
 		return descargasNoNecesarias;
 	}
 
-	public int getDescargasFallidas() {
+	public AtomicInteger getDescargasFallidas() {
 		return descargasFallidas;
 	}
 
