@@ -40,7 +40,9 @@ public class StoreFile {
 
 	/**
 	 *
-	 * @param override: si true, sobreescribe el archivo a guardar (en caso de existir)
+	 * @param override
+	 *            : si true, sobreescribe el archivo a guardar (en caso de
+	 *            existir)
 	 * @throws IOException
 	 */
 	public void store(boolean override) throws IOException {
@@ -54,12 +56,14 @@ public class StoreFile {
 		Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(page), this.charset));
 		try {
 			out.write(this.textoAGuardar);
+		} catch (Exception e) {
+			e.printStackTrace();
 		} finally {
 			out.close();
 		}
 	}
 
-	public static boolean fileExists(String ruta, String nombreArchivo, String extension){
+	public static boolean fileExists(String ruta, String nombreArchivo, String extension) {
 		return new File(ruta + nombreArchivo + extension).exists();
 	}
 }
