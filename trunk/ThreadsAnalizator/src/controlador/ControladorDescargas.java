@@ -32,6 +32,8 @@ public class ControladorDescargas implements ActionListener {
 	private VistaResultadoDescarga resultadoDescargas;
 	private ModeloDescarga modeloDescarga;
 
+	private boolean seNegoACrearCarpetaDestino = false;
+
 	public ControladorDescargas(VistaDescargas vista, VistaResultadoDescarga resultadoDescarga) {
 		this.vistaDescargas = vista;
 		this.resultadoDescargas = resultadoDescarga;
@@ -44,6 +46,7 @@ public class ControladorDescargas implements ActionListener {
 		// SE ELIGE MODO DESCARGA
 		if (e.getSource() == vistaDescargas.getRadioBtnDescargarNotas()
 				|| e.getSource() == vistaDescargas.getRadioBtnDescargarTapas()) {
+			seNegoACrearCarpetaDestino = false;
 
 			if (vistaDescargas.getRadioBtnDescargarNotas().isSelected()) {
 				deshabilitarCamposTapa();
@@ -53,17 +56,17 @@ public class ControladorDescargas implements ActionListener {
 		}
 		// SE ELIGE DIARIO PAGINA 12
 		if (e.getSource() == vistaDescargas.getRadioBtnPagina12()) {
-
+			seNegoACrearCarpetaDestino = false;
 		}
 
 		// SE ELIGE DIARIO LA NACION
 		if (e.getSource() == vistaDescargas.getRadioBtnLaNacion()) {
-
+			seNegoACrearCarpetaDestino = false;
 		}
 
 		// SE ELIGE SECCION ECONOMIA
 		if (e.getSource() == vistaDescargas.getChckbxEconomia()) {
-
+			seNegoACrearCarpetaDestino = false;
 		}
 
 		// SE ELIGE ORIGEN
@@ -71,53 +74,19 @@ public class ControladorDescargas implements ActionListener {
 			SetupGetDirVista mkdir = new SetupGetDirVista(vistaDescargas.getFrame(), true, true);
 			int returnVal = mkdir.getJFileChooser1().showOpenDialog(vistaDescargas.getFrame());
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
-				this.vistaDescargas.getTextFieldCarpetaOrigen().setText(mkdir.getSelected().toString());
+				String nuevoPath = ofrecerAgregarCarpetaDestino(mkdir.getSelected().toString());
+				this.vistaDescargas.getTextFieldCarpetaOrigen().setText(nuevoPath);
 			}
 		}
 
 		// SE ELIGE DESTINO
 		if (e.getSource() == vistaDescargas.getBtnAgregarCarpetaDestino()) {
+			seNegoACrearCarpetaDestino = false;
 			SetupGetDirVista mkdir = new SetupGetDirVista(vistaDescargas.getFrame(), true, true);
 			int returnVal = mkdir.getJFileChooser1().showOpenDialog(vistaDescargas.getFrame());
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
-				String pathDestino = mkdir.getSelected().toString();
-				String nombreDiarioAAgregar = "";
-				File dir = new File(pathDestino);
-				if (vistaDescargas.getRadioBtnLaNacion().isSelected()) {
-					if (dir.getName().equalsIgnoreCase("la nacion") || dir.getName().equalsIgnoreCase("la nación")
-							|| dir.getName().equalsIgnoreCase("lanacion")) {
-						this.vistaDescargas.getTextFieldCarpetaDestino().setText(pathDestino);
-					} else {
-						nombreDiarioAAgregar = vistaDescargas.getRadioBtnLaNacion().getText();
-					}
-				} else if (vistaDescargas.getRadioBtnPagina12().isSelected()) {
-					if (dir.getName().equalsIgnoreCase("pagina12") || dir.getName().equalsIgnoreCase("página12")
-							|| dir.getName().equalsIgnoreCase("pagina 12")
-							|| dir.getName().equalsIgnoreCase("página 12")) {
-
-					} else {
-						nombreDiarioAAgregar = vistaDescargas.getRadioBtnPagina12().getText();
-					}
-				}
-				if (!nombreDiarioAAgregar.isEmpty()) {
-					boolean agregarCarpeta = vistaDescargas
-							.solicitarRespuestaAUsuario("¿Desea agregar una carpeta para separar las descargas del diario?");
-					if (agregarCarpeta) {
-						String nuevaCarpeta = File.separator + nombreDiarioAAgregar;
-						boolean creacionExitosa = new File(pathDestino + nuevaCarpeta).mkdir();
-						if (!creacionExitosa) {
-							vistaDescargas
-									.mostrarMsjAUsuario(
-											"No se pudo crear la carpeta! Puede que no tenga permisos suficientes o ya exista la carpeta. Elija otra",
-											"Alerta!", JOptionPane.WARNING_MESSAGE);
-							vistaDescargas.getBtnAgregarCarpetaDestino().doClick();
-							return;
-						} else {
-							pathDestino += nuevaCarpeta;
-						}
-					}
-				}
-				this.vistaDescargas.getTextFieldCarpetaDestino().setText(pathDestino);
+				String nuevoPath = ofrecerAgregarCarpetaDestino(mkdir.getSelected().toString());
+				this.vistaDescargas.getTextFieldCarpetaDestino().setText(nuevoPath);
 			}
 		}
 
@@ -152,8 +121,8 @@ public class ControladorDescargas implements ActionListener {
 			if (vistaDescargas.getRadioBtnDescargarNotas().isSelected()) {
 				this.modeloDescarga = new ModeloDescargaNotas();
 				cargarDatosModoDescargaNotas();
-				msjValidacion = ((ModeloDescargaNotas) this.modeloDescarga).validarDatos();
-				if (!verificarCarpetas(((ModeloDescargaNotas) this.modeloDescarga).getRutaOrigen())) {
+
+				if (!validacionCarpetasOk(((ModeloDescargaNotas) this.modeloDescarga).getRutaOrigen())) {
 					vistaDescargas.getBtnAgregarCarpetaOrigen().doClick();
 					return;
 				}
@@ -161,7 +130,6 @@ public class ControladorDescargas implements ActionListener {
 				this.modeloDescarga = new ModeloDescargaTapas();
 				cargarDatosModoDescargaTapas();
 
-				msjValidacion = ((ModeloDescargaTapas) this.modeloDescarga).validarDatos();
 			} else {
 				String modosDescarga = "Nota - Tapa";
 				mostrarMsjAUsuario("Debe seleccionar el modo de descarga: " + modosDescarga, "Seleccionar Modo",
@@ -169,16 +137,28 @@ public class ControladorDescargas implements ActionListener {
 				return;
 			}
 
+			String nuevoPath = ofrecerAgregarCarpetaDestino(this.modeloDescarga.getRutaDestino());
+			if (!nuevoPath.isEmpty()) {
+				this.modeloDescarga.setRutaDestino(nuevoPath);
+			}
+
+			if (this.modeloDescarga instanceof ModeloDescargaTapas) {
+				msjValidacion = ((ModeloDescargaTapas) this.modeloDescarga).validarDatos();
+				System.out.println("taapsss");
+			} else {
+				msjValidacion = ((ModeloDescargaNotas) this.modeloDescarga).validarDatos();
+			}
+
 			if (!msjValidacion.isEmpty()) {
 				mostrarMsjAUsuario(msjValidacion, "Alerta", JOptionPane.WARNING_MESSAGE);
 				return;
 			}
 
-			if (!verificarCarpetas(this.modeloDescarga.getRutaDestino())) {
+			if (!validacionCarpetasOk(this.modeloDescarga.getRutaDestino())) {
 				vistaDescargas.getBtnAgregarCarpetaDestino().doClick();
 				return;
 			}
-
+			System.out.println(this.vistaDescargas.getTextFieldCarpetaDestino().getText());
 			// PROCESAR
 			try {
 				SwingUtils.setEnableContainer(vistaDescargas.getPanelCarpetaDestino(), false);
@@ -341,7 +321,8 @@ public class ControladorDescargas implements ActionListener {
 			opcionesInicialesFile.write("OR:" + ruta + "\n");
 		}
 		ruta = vistaDescargas.getTextFieldCarpetaDestino().getText().toString();
-		opcionesInicialesFile.write("DES:" + ruta);
+		opcionesInicialesFile.write("DES:" + ruta + "\n");
+		opcionesInicialesFile.write("CD:" + vistaDescargas.getSpinnerCantDias().getValue());
 		opcionesInicialesFile.close();
 
 	}
@@ -400,6 +381,10 @@ public class ControladorDescargas implements ActionListener {
 							if (opcion[0].equals("DES")) {
 								this.vistaDescargas.getTextFieldCarpetaDestino().setText(opcion[1].toString());
 							}
+							if (opcion[0].equals("CD")) {
+								this.vistaDescargas.getSpinnerCantDias()
+										.setValue(Integer.valueOf(opcion[1].toString()));
+							}
 						}
 					}
 				} catch (IOException e1) {
@@ -416,7 +401,6 @@ public class ControladorDescargas implements ActionListener {
 			}
 
 			this.vistaDescargas.getDateChooser().setDate(new Date());
-			this.vistaDescargas.getSpinnerCantDias().setValue(500);
 
 			if (vistaDescargas.getRadioBtnDescargarTapas().isSelected()) {
 				this.deshabilitarCamposNota();
@@ -424,8 +408,6 @@ public class ControladorDescargas implements ActionListener {
 				this.deshabilitarCamposTapa();
 			}
 		}
-		// TODO: podría guardar las últimas opciones utilizadas como
-		// predeterminado...
 	}
 
 	// Deshabilito los campos que se usan para descargar Notas
@@ -457,7 +439,7 @@ public class ControladorDescargas implements ActionListener {
 		this.resultadoDescargas.getBtnGuardar().setVisible(true);
 	}
 
-	private boolean verificarCarpetas(String path) {
+	private boolean validacionCarpetasOk(String path) {
 		File carpeta = new File(path);
 		if (!carpeta.exists()) {
 			mostrarMsjAUsuario("La carpeta " + path + " no existe!", "Alerta", JOptionPane.WARNING_MESSAGE);
@@ -469,5 +451,45 @@ public class ControladorDescargas implements ActionListener {
 			return false;
 		}
 		return true;
+	}
+
+	private String ofrecerAgregarCarpetaDestino(String path) {
+		if (seNegoACrearCarpetaDestino) {
+			return path;
+		}
+		String nombreDiarioAAgregar = "";
+		File dir = new File(path);
+		if (vistaDescargas.getRadioBtnLaNacion().isSelected()) {
+			if (!dir.getName().equalsIgnoreCase("la nacion") && !dir.getName().equalsIgnoreCase("la nación")
+					&& !dir.getName().equalsIgnoreCase("lanacion") && !dir.getName().equalsIgnoreCase("ln")) {
+				nombreDiarioAAgregar = vistaDescargas.getRadioBtnLaNacion().getText();
+			}
+		} else if (vistaDescargas.getRadioBtnPagina12().isSelected()) {
+			if (!dir.getName().equalsIgnoreCase("pagina12") && !dir.getName().equalsIgnoreCase("página12")
+					&& !dir.getName().equalsIgnoreCase("pagina 12") && !dir.getName().equalsIgnoreCase("página 12")) {
+				nombreDiarioAAgregar = vistaDescargas.getRadioBtnPagina12().getText();
+			}
+		}
+		if (!nombreDiarioAAgregar.isEmpty()) {
+			boolean agregarCarpeta = vistaDescargas
+					.solicitarRespuestaAUsuario("¿Desea agregar una carpeta para separar las descargas del diario?");
+			if (agregarCarpeta) {
+				String nuevaCarpeta = File.separator + nombreDiarioAAgregar;
+				boolean creacionExitosa = new File(path + nuevaCarpeta).mkdir();
+				if (!creacionExitosa) {
+					vistaDescargas
+							.mostrarMsjAUsuario(
+									"No se pudo crear la carpeta! Puede que no tenga permisos suficientes o ya exista la carpeta. Elija otra",
+									"Alerta!", JOptionPane.WARNING_MESSAGE);
+					vistaDescargas.getBtnAgregarCarpetaDestino().doClick();
+					return "";
+				} else {
+					path += nuevaCarpeta;
+				}
+			} else {
+				seNegoACrearCarpetaDestino = true;
+			}
+		}
+		return path;
 	}
 }
