@@ -176,12 +176,11 @@ public class PageDownloader extends Observable {
 				datosAGuardar = tapas.text();
 			}
 
-			descargasRealizadas.incrementAndGet();
-
 			try {
 				StoreFile sf = new StoreFile(pathAGuardar, formatoSalida.getExtension(), datosAGuardar, nombreArchivo,
 						diario.getCharsetName());
 				sf.store(override);
+				descargasRealizadas.incrementAndGet();
 			} catch (IOException e) {
 				erroresDescarga.add("ERROR AL QUERER GUARDAR EL ARCHIVO " + nombreArchivo + "\r\n");
 				descargasFallidas.incrementAndGet();
