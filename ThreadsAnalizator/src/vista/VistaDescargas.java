@@ -98,6 +98,10 @@ public class VistaDescargas {
 		return grupoDiario;
 	}
 
+	public ButtonGroup getGrupoOutput() {
+		return grupoOutput;
+	}
+
 	public JRadioButton getRadioBtnDescargarTapas() {
 		return radioBtnDescargarTapas;
 	}
