@@ -1,15 +1,17 @@
 package entities;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Date;
 
+import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import Utils.Utils;
 
-
-
-public class LaNacion extends DiarioDigital{
+public class LaNacion extends DiarioDigital {
 
 	private static final String LINK_LANACION = "http://servicios.lanacion.com.ar/archivo-f";// 04/09/2014-c30"
 	private static final String CHARSETNAME_LANACION = "utf-8";
@@ -45,8 +47,31 @@ public class LaNacion extends DiarioDigital{
 		return page.getElementById(this.getNombreGrupoNoticias());
 	}
 
-	@Override // formato es dd/MM/yyyy
+	@Override
+	// formato es dd/MM/yyyy
 	public String getFechaConFormato(Date fechaDate) {
 		return Utils.dtoDD_MM_YYYY(fechaDate);
+	}
+
+	@Override
+	public Elements getElementNotasABuscar(File file) {
+		Element notasABuscar = null;
+		try {
+			notasABuscar = Jsoup.parse(file, this.getCharsetName()).getElementById(this.getNombreGrupoNoticias());
+		} catch (IOException e) {
+			return null;
+		}
+		Elements notas = notasABuscar.getElementsByTag("a").select("[href]");
+		return notas;
+	}
+
+	@Override
+	public boolean isPagina12() {
+		return false;
+	}
+
+	@Override
+	public boolean isLaNacion() {
+		return true;
 	}
 }

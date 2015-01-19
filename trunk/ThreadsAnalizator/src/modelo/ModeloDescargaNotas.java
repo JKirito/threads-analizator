@@ -1,6 +1,15 @@
 package modelo;
 
+import java.io.File;
+
+import entities.DiarioDigital;
+import entities.EconomiaLaNacion;
+import entities.EconomiaPagina12;
 import entities.FormatoSalida;
+import entities.LaNacion;
+import entities.Pagina12;
+import entities.Seccion;
+import entities.SeccionEconomia;
 
 public class ModeloDescargaNotas extends ModeloDescarga{
 
@@ -30,6 +39,30 @@ public class ModeloDescargaNotas extends ModeloDescarga{
 	public void descargar() {
 		this.setDescargando(true);
 		System.out.println("DESCARGAR NOTAS!!!");
+		this.descargaDetenida = false;
+
+		DiarioDigital diario = null;
+		Seccion seccion = null;
+		if (this.getDiarioDescarga().equals(Pagina12.NOMBRE_DIARIO)) {
+			diario = new Pagina12();
+			if (this.getSeccionDescarga().equals(SeccionEconomia.NOMBRE_SECCION)) {
+				seccion = new EconomiaPagina12();
+			}
+		} else if (this.getDiarioDescarga().equals(LaNacion.NOMBRE_DIARIO)) {
+			diario = new LaNacion();
+			if (this.getSeccionDescarga().equals(SeccionEconomia.NOMBRE_SECCION)) {
+				seccion = new EconomiaLaNacion();
+			}
+		}
+
+		String pathAGuardar = this.getRutaDestino() + File.separatorChar;
+		int diasARecopílar = this.getCantTapasDescargar();
+
+//		this.pageDownloader = new PageDownloader(diario, seccion, this.getFormatoOutput(),pathAGuardar, fechaHasta, diasARecopílar, this.isOverride());
+		this.pageDownloader.addObserver(this.getSwingWorker());
+		this.pageDownloader.download();
+		this.setDescargando(false);
+		this.controladorDescargas.descargaFinalizada();
 
 
 		this.setDescargando(false);

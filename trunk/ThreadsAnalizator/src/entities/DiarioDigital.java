@@ -1,9 +1,11 @@
 package entities;
 
+import java.io.File;
 import java.util.Date;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 public abstract class DiarioDigital {
 
@@ -62,4 +64,10 @@ public abstract class DiarioDigital {
 	public abstract Element getSoloGrupoNoticias(Document page);
 
 	public abstract String getFechaConFormato(Date fechaDate);
+
+	public abstract Elements getElementNotasABuscar(File file);
+
+	public abstract boolean isPagina12();
+
+	public abstract boolean isLaNacion();
 }
