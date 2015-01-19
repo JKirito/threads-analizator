@@ -1,5 +1,8 @@
 package servicios_Pagina12;
 
+import servicios.NotesRecolator;
+import entities.Pagina12;
+
 
 public class DescargarNotasEconomiaPagina12 {
 
@@ -13,7 +16,7 @@ public class DescargarNotasEconomiaPagina12 {
 
 		int cantHilos = 20;//Integer.parseInt(args[0]);
 
-		NotesRecolator nt = new NotesRecolator(pathOrigen, pathAGuardar, cantHilos);
+		NotesRecolator nt = new NotesRecolator(pathOrigen, pathAGuardar, cantHilos, new Pagina12());
 		nt.iniciar();
 	}
 }
