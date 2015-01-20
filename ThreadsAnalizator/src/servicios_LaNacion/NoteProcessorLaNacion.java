@@ -10,11 +10,14 @@ import org.jsoup.select.Elements;
 import servicios.NoteProcessor;
 import Utils.StoreFile;
 import entities.DiarioDigital;
+import entities.FormatoSalida;
+import entities.Note;
 
 public class NoteProcessorLaNacion extends NoteProcessor {
 
-	public NoteProcessorLaNacion(String archivo, Element elem, String pathAGuardar, DiarioDigital diario) {
-		super(archivo, elem, pathAGuardar, diario);
+	public NoteProcessorLaNacion(String archivo, Element elem, String pathAGuardar, DiarioDigital diario,
+			FormatoSalida formato) {
+		super(archivo, elem, pathAGuardar, diario, formato);
 	}
 
 	@Override
@@ -32,11 +35,11 @@ public class NoteProcessorLaNacion extends NoteProcessor {
 		Elements titulo = encabezado.getAllElements().select("h1");
 		String nombreArchivo = titulo.text();
 
-		guardarNota(doc, nombreArchivo);
+		guardarNotaHTML(doc, nombreArchivo);
 
 	}
 
-	public void guardarNota(Document doc, String titulo) {
+	public void guardarNotaHTML(Document doc, String titulo) {
 		String nombreArchivo = this.getNombreArchivoAParsear().replace(".html", "_" + titulo);
 		if (nombreArchivo.contains("/"))
 			nombreArchivo = nombreArchivo.replace("/", "-");
@@ -49,6 +52,12 @@ public class NoteProcessorLaNacion extends NoteProcessor {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public void guardarNotaTXT(Note nota, String archivo, String pathAGuardar) {
+		// TODO Auto-generated method stub
+
 	}
 
 }

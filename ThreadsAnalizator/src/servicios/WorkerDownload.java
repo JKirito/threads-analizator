@@ -10,6 +10,7 @@ import javax.swing.JProgressBar;
 import javax.swing.SwingWorker;
 
 import modelo.ModeloDescarga;
+import modelo.ModeloDescargaTapas;
 
 public class WorkerDownload extends SwingWorker<Void, Integer> implements Observer {
 	private final JLabel lblProgreso;
@@ -57,12 +58,13 @@ public class WorkerDownload extends SwingWorker<Void, Integer> implements Observ
 		int cantDescargados = chunks.get(0);
 		int total = this.modeloDescargas.getCantTapasDescargar();
 		progressBar.setValue(cantDescargados);
-		this.lblProgreso.setText("Descargando.. "+ cantDescargados + " de " + total);
+		String msjDescargando = modeloDescargas instanceof ModeloDescargaTapas ? "Descargando.. " : "Procesando.. ";
+		this.lblProgreso.setText(msjDescargando + cantDescargados + " de " + total);
 	}
 
 	@Override
 	public void update(Observable o, Object arg) {
-		if(arg == null){
+		if (arg == null) {
 			this.lblProgreso.setText("Deteniendo... ");
 		}
 		publish(((AtomicInteger) arg).intValue());

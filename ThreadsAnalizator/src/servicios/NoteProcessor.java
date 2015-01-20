@@ -4,6 +4,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 import entities.DiarioDigital;
+import entities.FormatoSalida;
+import entities.Note;
 
 public abstract class NoteProcessor implements Runnable {
 
@@ -11,13 +13,15 @@ public abstract class NoteProcessor implements Runnable {
 	private String nombreArchivoAParsear;
 	private String pathAGuardar;
 	private DiarioDigital diario;
+	private FormatoSalida formatoSalida;
 
-	public NoteProcessor(String archivo, Element elem, String pathAGuardar, DiarioDigital diario) {
+	public NoteProcessor(String archivo, Element elem, String pathAGuardar, DiarioDigital diario, FormatoSalida formato) {
 		super();
 		this.nombreArchivoAParsear = archivo;
 		this.elem = elem;
 		this.pathAGuardar = pathAGuardar;
 		this.diario = diario;
+		this.formatoSalida = formato;
 	}
 
 	public Element getElem() {
@@ -36,8 +40,14 @@ public abstract class NoteProcessor implements Runnable {
 		return diario;
 	}
 
+	public FormatoSalida getFormatoSalida() {
+		return formatoSalida;
+	}
+
 	@Override
 	public abstract void run();
 
-	public abstract void guardarNota(Document doc, String titulo);
+	public abstract void guardarNotaHTML(Document doc, String titulo);
+
+	public abstract void guardarNotaTXT(Note nota, String archivo, String pathAGuardar);
 }

@@ -431,6 +431,9 @@ public class ControladorDescargas implements ActionListener {
 
 	public void descargaFinalizada() {
 		SwingUtils.setEnableContainer(this.vistaDescargas.getFrame(), true);
+		if(vistaDescargas.getRadioBtnDescargarTapas().isSelected()){
+			vistaDescargas.getRadioBtnDescargarTapas().doClick();
+		}
 		String msjDescarga = this.modeloDescarga.isDescargaDetenida() ? "Detenido" : "Descarga Finalizada";
 		this.resultadoDescargas.setTitle(msjDescarga);
 		resultadoDescargas.getBtnCerrar().setText("Cerrar");

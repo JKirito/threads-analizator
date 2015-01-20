@@ -10,11 +10,14 @@ import org.jsoup.select.Elements;
 import servicios.NoteProcessor;
 import Utils.StoreFile;
 import entities.DiarioDigital;
+import entities.FormatoSalida;
+import entities.FormatoTexto;
+import entities.Note;
 
 public class NoteProcessorPagina12 extends NoteProcessor {
 
-	public NoteProcessorPagina12(String archivo, Element elem, String pathAGuardar, DiarioDigital diario) {
-		super(archivo, elem, pathAGuardar, diario);
+	public NoteProcessorPagina12(String archivo, Element elem, String pathAGuardar, DiarioDigital diario, FormatoSalida formato) {
+		super(archivo, elem, pathAGuardar, diario, formato);
 	}
 
 	@Override
@@ -29,15 +32,19 @@ public class NoteProcessorPagina12 extends NoteProcessor {
 		if (doc == null) {
 			return;
 		}
+
+		if(this.getFormatoSalida() instanceof FormatoTexto){
+//			LimpiarHtml limpiador = new LimpiarHtml();//TODO agregar limpiador por diario
+		}
 		Element encabezado = doc.getElementsByAttributeValue("class", "nota top12").first();
 		Elements titulo = encabezado.getAllElements().select("h2");
 		String nombreArchivo = titulo.text();
 
-		guardarNota(doc, nombreArchivo);
+		guardarNotaHTML(doc, nombreArchivo);
 
 	}
 
-	public void guardarNota(Document doc, String titulo) {
+	public void guardarNotaHTML(Document doc, String titulo) {
 		String nombreArchivo = this.getNombreArchivoAParsear().replace(".html", "_" + titulo);
 		if (nombreArchivo.contains("/"))
 			nombreArchivo = nombreArchivo.replace("/", "-");
@@ -54,13 +61,19 @@ public class NoteProcessorPagina12 extends NoteProcessor {
 		}
 		// File a = new File(this.getPathAGuardar() + nombreArchivo +
 		// ".html//");
-		StoreFile sf = new StoreFile(this.getPathAGuardar(), ".html", doc.html(), nombreArchivo, "iso-8859-1");
+		StoreFile sf = new StoreFile(this.getPathAGuardar(), ".html", doc.html(), nombreArchivo, this.getDiario().getCharsetName());
 		try {
 			sf.store(false);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public void guardarNotaTXT(Note nota, String archivo, String pathAGuardar) {
+		// TODO Auto-generated method stub
+
 	}
 
 }
