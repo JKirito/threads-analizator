@@ -4,9 +4,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import servicios.PageDownloader;
 import servicios.WorkerDownload;
-import Utils.Utils;
 import controlador.ControladorDescargas;
 import entities.FormatoSalida;
 
@@ -16,14 +14,18 @@ public abstract class ModeloDescarga {
 	private String modoDescarga;
 	private String diarioDescarga;
 	private String seccionDescarga;
+	/**
+	 * El el modo de descarga de Tapas, representa la cantidad que el usuario elige a descargar.
+	 * En el modo de descarga de Notas, representa la cantidad de archivos que hay en la carpeta origen,
+	 * 	suponiendo que son todos archivos de las tapas descargadas anteriormente.
+	 */
 	private int cantTapasDescargar;
 	private boolean override;
 	private FormatoSalida formatoOutput; // Html / txt
 	protected ControladorDescargas controladorDescargas;
-	private boolean isDescargando;
+	protected boolean isDescargando;
 	private WorkerDownload swingWorker;
 	protected boolean descargaDetenida;
-	protected PageDownloader pageDownloader;
 	private static final String MSJ_DIARIO_DESCARGA_VACIO = "Debe seleccionar el diario del cual desea descargar";
 	private static final String MSJ_CARPETADESTINO_VACIO = "Debe seleccionar la carpeta de destino";
 	private static final String MSJ_SECCION_DESCARGA_VACIO = "Debe seleccionar la sección que desea descargar";
@@ -123,11 +125,7 @@ public abstract class ModeloDescarga {
 
 	public abstract void descargar();
 
-	public void detenerDescarga() {
-		this.pageDownloader.detenerEjecucion();
-		this.descargaDetenida = true;
-		this.isDescargando = false;
-	}
+	public abstract void detenerDescarga();
 
 	public abstract int getCantOptimaHilos();
 
@@ -153,18 +151,7 @@ public abstract class ModeloDescarga {
 
 	}
 
-	public String getInformeDescarga() {
-		String informe = "INFORME DESCARGA: "
-				+ (this.descargaDetenida ? "La descarga fue detenida.\r\n" : "Descargas Finalizada con éxito.\r\n");
-		informe += "\r\nDESCARGAS REALIZADAS: " + this.pageDownloader.getDescargasRealizadas() + "\r\n";
-		informe += "\r\nDESCARGAS NO NECESARIAS (YA EXISTÍA EL ARCHIVO): "
-				+ this.pageDownloader.getDescargasNoNecesarias() + "\r\n";
-		informe += "\r\nDESCARGAS FALLIDAS: " + this.pageDownloader.getDescargasFallidas() + "\r\n";
-		informe += this.pageDownloader.getErroresDescarga().isEmpty() ? "" : "\r\n\r\nInfo Adicional por descargas fallidas: " + "\r\n\r\n"
-				+ Utils.stringListToString(this.pageDownloader.getErroresDescarga(), "-") + "\r\n";
-
-		return informe;
-	}
+	public abstract String getInformeDescarga();
 
 	public void setControlador(ControladorDescargas controladorDescargas) {
 		this.controladorDescargas = controladorDescargas;
