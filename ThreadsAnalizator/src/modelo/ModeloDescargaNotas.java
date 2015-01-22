@@ -57,6 +57,7 @@ public class ModeloDescargaNotas extends ModeloDescarga {
 		int cantHilos = 20;// TODO: pedir por pantalla!!
 		NotesRecolator nr = new NotesRecolator(pathOrigen, pathAGuardar, cantHilos, diario, this.getFormatoOutput());
 		nr.addObserver(this.getSwingWorker());
+		System.out.println("por iniciar...");
 		nr.iniciar();
 		this.setDescargando(false);
 		this.controladorDescargas.descargaFinalizada();
