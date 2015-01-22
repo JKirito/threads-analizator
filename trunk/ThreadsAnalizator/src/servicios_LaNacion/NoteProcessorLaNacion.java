@@ -7,11 +7,13 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import servicios.LimpiarHtml;
 import servicios.NoteProcessor;
 import Utils.StoreFile;
 import entities.DiarioDigital;
+import entities.FormatoHtml;
 import entities.FormatoSalida;
-import entities.Note;
+import entities.FormatoTexto;
 
 public class NoteProcessorLaNacion extends NoteProcessor {
 
@@ -28,6 +30,9 @@ public class NoteProcessorLaNacion extends NoteProcessor {
 		} catch (IOException e) {
 			run();
 		}
+		System.out.println("haoaksdlaskdjlaksjd");
+		System.out.println(doc.text());
+		System.out.println("AAAAAAAAAAAAAAAAA");
 		if (doc == null) {
 			return;
 		}
@@ -35,7 +40,15 @@ public class NoteProcessorLaNacion extends NoteProcessor {
 		Elements titulo = encabezado.getAllElements().select("h1");
 		String nombreArchivo = titulo.text();
 
-		guardarNotaHTML(doc, nombreArchivo);
+		if (this.getFormatoSalida() instanceof FormatoHtml) {
+			guardarNotaHTML(doc, nombreArchivo);
+		}
+
+		if (this.getFormatoSalida() instanceof FormatoTexto) {
+			LimpiarHtml limpiador = new LimpiarHtml(this.getPathAGuardar(), this.getDiario());
+			limpiador.limpiarDocumentoYGuardar(doc, nombreArchivo);
+			return;
+		}
 
 	}
 
@@ -52,12 +65,6 @@ public class NoteProcessorLaNacion extends NoteProcessor {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
-
-	@Override
-	public void guardarNotaTXT(Note nota, String archivo, String pathAGuardar) {
-		// TODO Auto-generated method stub
-
 	}
 
 }

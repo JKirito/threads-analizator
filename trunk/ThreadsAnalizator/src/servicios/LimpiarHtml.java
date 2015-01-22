@@ -6,30 +6,24 @@ import java.util.Date;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 import Utils.StoreFile;
 import entities.DiarioDigital;
 import entities.FormatoTexto;
 import entities.Note;
 
-public abstract class LimpiarHtml {
+public class LimpiarHtml {
 
-	private String pathOrigen;
 	private String pathDestino;
-	private Document doc;
 	private DiarioDigital diario;
 
-	public LimpiarHtml(String pathOrigen, String pathDestino, DiarioDigital diario, Document doc) {
+	public LimpiarHtml(String pathDestino, DiarioDigital diario) {
 		super();
-		this.pathOrigen = pathOrigen;
 		this.pathDestino = pathDestino;
 		this.diario = diario;
-		this.doc = doc;
 	}
 
-	public void limpiarArchivos() throws IOException {
+	public void limpiarArchivos(String pathOrigen) throws IOException {
 
 		// Obtener la carpeta donde se encuentran todos los archivos
 		File carpeta = new File(pathOrigen);
@@ -52,53 +46,22 @@ public abstract class LimpiarHtml {
 				}
 				i++;
 
-				Document doc = Jsoup.parse(file, "utf-8");
+				Document doc = Jsoup.parse(file, diario.getCharsetName());
 				if (doc == null) {
 					System.out.println();
 					System.out.println("DOC NULL: " + file.getName());
 					continue;
 				}
 
-				Note nota = limpiarDocument();
+				Note nota = diario.getNotaFromDocument(doc);
 
-				// long inicioGuardarUnaNota = new Date().getTime();
 				guardarNota(nota, archivo);
-				// long tardoEnGuardarUnaNota = new Date().getTime() -
-				// inicioGuardarUnaNota;
 			}
 		}
 	}
 
-	public Note limpiarDocument() {
-		Note nota = getNotaFromDocument(doc);
-		return nota;
-	}
-
 	public boolean limpiarDocumentoYGuardar(Document doc, String nombreArchivo) {
-		return guardarNota(getNotaFromDocument(doc), nombreArchivo);
-	}
-
-	public static Note getNotaFromDocument(Document doc) {
-		if (doc.getElementById("encabezado") == null) {
-			System.out.println("No tiene encabezado");
-			// logger.error("Fail to process file {}");
-			return null;
-		}
-		Element encabezado = doc.getElementById("encabezado");
-		// Elements firma = encabezado.getElementsByAttributeValue("class",
-		// "firma");
-		encabezado.getElementsByClass("firma").remove();
-		encabezado.getElementsByClass("bajada").remove();
-		Elements volanta = encabezado.getElementsByAttributeValue("class", "volanta");
-		Elements titulo = encabezado.getAllElements().select("h1");
-		Elements descripcion = encabezado.getAllElements().select("p");
-		descripcion.removeAll(volanta);
-		Element cuerpo = doc.getElementById("cuerpo");
-		Elements archRel = cuerpo.getElementsByAttributeValue("class", "archivos-relacionados");
-		Elements fin = cuerpo.getElementsByAttributeValue("class", "fin");
-
-		return new Note(volanta.text(), titulo.text(), descripcion.text(), cuerpo.text().replace(archRel.text(), "")
-				.replace(fin.text(), ""), "", null);
+		return guardarNota(diario.getNotaFromDocument(doc), nombreArchivo);
 	}
 
 	/**
@@ -109,7 +72,7 @@ public abstract class LimpiarHtml {
 	 *            nombre del archivo a guardar
 	 * @return
 	 */
-	public boolean guardarNota(Note nota, String archivo) {
+	private boolean guardarNota(Note nota, String archivo) {
 		String nombreArchivo = archivo.replace(".html", "");
 		if (nombreArchivo.contains("/")) {
 			nombreArchivo = nombreArchivo.replace("/", "-");

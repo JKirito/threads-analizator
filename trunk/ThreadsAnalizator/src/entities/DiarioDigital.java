@@ -70,4 +70,6 @@ public abstract class DiarioDigital {
 	public abstract boolean isPagina12();
 
 	public abstract boolean isLaNacion();
+
+	public abstract Note getNotaFromDocument(Document doc);
 }

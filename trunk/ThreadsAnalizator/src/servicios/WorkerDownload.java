@@ -31,6 +31,7 @@ public class WorkerDownload extends SwingWorker<Void, Integer> implements Observ
 		// Comienzo descarga. En el transcurso de la descarga me avisa la cant.
 		// que va descargando para
 		// actualizar el progressBar
+		System.out.println("por descargar....");
 		this.modeloDescargas.descargar();
 
 		return null;

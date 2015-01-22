@@ -5,7 +5,6 @@ import org.jsoup.nodes.Element;
 
 import entities.DiarioDigital;
 import entities.FormatoSalida;
-import entities.Note;
 
 public abstract class NoteProcessor implements Runnable {
 
@@ -49,5 +48,4 @@ public abstract class NoteProcessor implements Runnable {
 
 	public abstract void guardarNotaHTML(Document doc, String titulo);
 
-	public abstract void guardarNotaTXT(Note nota, String archivo, String pathAGuardar);
 }

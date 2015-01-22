@@ -431,7 +431,7 @@ public class ControladorDescargas implements ActionListener {
 
 	public void descargaFinalizada() {
 		SwingUtils.setEnableContainer(this.vistaDescargas.getFrame(), true);
-		if(vistaDescargas.getRadioBtnDescargarTapas().isSelected()){
+		if (vistaDescargas.getRadioBtnDescargarTapas().isSelected()) {
 			vistaDescargas.getRadioBtnDescargarTapas().doClick();
 		}
 		String msjDescarga = this.modeloDescarga.isDescargaDetenida() ? "Detenido" : "Descarga Finalizada";
@@ -478,7 +478,7 @@ public class ControladorDescargas implements ActionListener {
 			} else if (vistaDescargas.getRadioBtnDescargarNotas().isSelected()) {
 				modoDescarga = vistaDescargas.getRadioBtnDescargarNotas().getText();
 				if (vistaDescargas.getRadioBtnHTML().isSelected()) {
-					modoDescarga += vistaDescargas.getRadioBtnHTML().getText();
+					modoDescarga += File.separator + vistaDescargas.getRadioBtnHTML().getText();
 				} else if (vistaDescargas.getRadioBtnTXT().isSelected()) {
 					modoDescarga += File.separator + vistaDescargas.getRadioBtnTXT().getText();
 				}
