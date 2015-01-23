@@ -91,8 +91,19 @@ public class Pagina12 extends DiarioDigital {
 	}
 
 	@Override
-	public Note getNotaFromDocument(Document doc) {
+	public Note getNotaProcesadaFromDocument(Document doc) {
 		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Document getNotaFromDocument(Document doc) {
+		try {
+			throw new Exception("Aun no implementado!");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return null;
 	}
 }

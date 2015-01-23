@@ -11,7 +11,7 @@ public abstract class NoteProcessor implements Runnable {
 	private Element elem;
 	private String nombreArchivoAParsear;
 	private String pathAGuardar;
-	private DiarioDigital diario;
+	private volatile DiarioDigital diario;
 	private FormatoSalida formatoSalida;
 
 	public NoteProcessor(String archivo, Element elem, String pathAGuardar, DiarioDigital diario, FormatoSalida formato) {

@@ -71,5 +71,7 @@ public abstract class DiarioDigital {
 
 	public abstract boolean isLaNacion();
 
-	public abstract Note getNotaFromDocument(Document doc);
+	public abstract Note getNotaProcesadaFromDocument(Document doc);
+
+	public abstract Document getNotaFromDocument(Document doc);
 }

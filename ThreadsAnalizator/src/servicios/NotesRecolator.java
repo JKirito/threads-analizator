@@ -40,14 +40,13 @@ public class NotesRecolator extends Observable {
 	public void iniciar() {
 
 		// Obtener la carpeta donde se encuentran todos los archivos
-		File carpeta = new File(pathOrigen);System.out.println(carpeta.listFiles().length);
+		File carpeta = new File(pathOrigen);
 		if (carpeta.isDirectory()) {
 			int i = 1;
 			// Recorrer cada archivo de la carpeta
 			for (String archivo : carpeta.list()) {
 				File file = new File(carpeta.getAbsolutePath() + "//" + archivo);
 				if (file.isFile() && !detener) {
-
 					if (i % 10 == 0) {
 						this.setChanged();
 						this.notifyObservers(i);
@@ -56,11 +55,10 @@ public class NotesRecolator extends Observable {
 
 					// Obtener los links asociados a las notas de cada archivo
 					Elements notasABuscar = diario.getElementNotasABuscar(file);
-					System.out.println("notas a buscar...");
-					System.out.println(notasABuscar.text());
 					for (Element E : notasABuscar) {
 						NoteProcessor np = null;
 						if (diario.isPagina12()) {
+							System.out.println("Página 12,,,,");
 							np = new NoteProcessorPagina12(archivo, E, pathAGuardar, diario, formatoSalida);
 						}
 						if (diario.isLaNacion()) {

@@ -28,11 +28,8 @@ public class NoteProcessorLaNacion extends NoteProcessor {
 		try {
 			doc = Jsoup.connect(this.getElem().attr("href")).timeout(0).get();
 		} catch (IOException e) {
-			run();
+			e.printStackTrace();
 		}
-		System.out.println("haoaksdlaskdjlaksjd");
-		System.out.println(doc.text());
-		System.out.println("AAAAAAAAAAAAAAAAA");
 		if (doc == null) {
 			return;
 		}
@@ -40,8 +37,11 @@ public class NoteProcessorLaNacion extends NoteProcessor {
 		Elements titulo = encabezado.getAllElements().select("h1");
 		String nombreArchivo = titulo.text();
 
+		Document nuevoDoc = this.getDiario().getNotaFromDocument(doc);
+
 		if (this.getFormatoSalida() instanceof FormatoHtml) {
-			guardarNotaHTML(doc, nombreArchivo);
+			guardarNotaHTML(nuevoDoc, nombreArchivo);
+			// guardarNotaHTML(nota, nombreArchivo);
 		}
 
 		if (this.getFormatoSalida() instanceof FormatoTexto) {
@@ -66,5 +66,22 @@ public class NoteProcessorLaNacion extends NoteProcessor {
 			e.printStackTrace();
 		}
 	}
+
+	// public void guardarNotaHTML(Element nota, String titulo) {
+	// String nombreArchivo = this.getNombreArchivoAParsear().replace(".html",
+	// "_" + titulo);
+	// if (nombreArchivo.contains("/"))
+	// nombreArchivo = nombreArchivo.replace("/", "-");
+	// if (nombreArchivo.contains(";"))
+	// nombreArchivo = nombreArchivo.replace(";", ",");
+	// StoreFile sf = new StoreFile(this.getPathAGuardar(), ".html",
+	// nota.html(), nombreArchivo, "utf-8");
+	// try {
+	// sf.store(false);
+	// } catch (IOException e) {
+	// // TODO Auto-generated catch block
+	// e.printStackTrace();
+	// }
+	// }
 
 }
