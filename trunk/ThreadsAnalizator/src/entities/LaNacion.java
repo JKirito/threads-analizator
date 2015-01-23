@@ -57,7 +57,9 @@ public class LaNacion extends DiarioDigital {
 	public Elements getElementNotasABuscar(File file) {
 		Element notasABuscar = null;
 		try {
-			notasABuscar = Jsoup.parse(file, this.getCharsetName()).getElementById(this.getNombreGrupoNoticias());
+			// notasABuscar = Jsoup.parse(file,
+			// this.getCharsetName()).getElementById(this.getNombreGrupoNoticias());
+			notasABuscar = Jsoup.parse(file, this.getCharsetName()).body();
 		} catch (IOException e) {
 			return null;
 		}
@@ -76,7 +78,7 @@ public class LaNacion extends DiarioDigital {
 	}
 
 	@Override
-	public Note getNotaFromDocument(Document doc) {
+	public Note getNotaProcesadaFromDocument(Document doc) {
 		if (doc.getElementById("encabezado") == null) {
 			System.out.println("No tiene encabezado");
 			return null;
@@ -96,5 +98,30 @@ public class LaNacion extends DiarioDigital {
 
 		return new Note(volanta.text(), titulo.text(), descripcion.text(), cuerpo.text().replace(archRel.text(), "")
 				.replace(fin.text(), ""), "", null);
+	}
+
+	public Document getNotaFromDocument(Document doc) {
+		if (doc.getElementById("encabezado") == null) {
+			System.out.println("No tiene encabezado");
+			return null;
+		}
+		Element encabezado = doc.getElementById("encabezado");
+		Element cuerpo = doc.getElementById("cuerpo");
+
+		// Eliminar datos innecesarios
+		if (cuerpo.getElementsByClass("archivos-relacionados") != null) {
+			cuerpo.getElementsByClass("archivos-relacionados").remove();
+		}
+		if (cuerpo.getElementsByClass("fin") != null) {
+			cuerpo.getElementsByClass("fin").remove();
+		}
+		if (encabezado.getElementById("archivoPDF") != null) {
+			encabezado.getElementById("archivoPDF").remove();
+		}
+
+		Document nd = new Document("");
+		nd.appendChild(encabezado).appendChild(cuerpo);
+
+		return nd;
 	}
 }

@@ -55,12 +55,13 @@ public class ModeloDescargaNotas extends ModeloDescarga {
 		String pathOrigen = this.getRutaOrigen() + File.separatorChar;
 		String pathAGuardar = this.getRutaDestino() + File.separatorChar;
 		int cantHilos = 20;// TODO: pedir por pantalla!!
-		NotesRecolator nr = new NotesRecolator(pathOrigen, pathAGuardar, cantHilos, diario, this.getFormatoOutput());
-		nr.addObserver(this.getSwingWorker());
+		noteRecolator = new NotesRecolator(pathOrigen, pathAGuardar, cantHilos, diario, this.getFormatoOutput());
+		noteRecolator.addObserver(this.getSwingWorker());
 		System.out.println("por iniciar...");
-		nr.iniciar();
+		noteRecolator.iniciar();
 		this.setDescargando(false);
 		this.controladorDescargas.descargaFinalizada();
+		System.out.println("DESCARGA COMPLETAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
 	}
 
 	@Override

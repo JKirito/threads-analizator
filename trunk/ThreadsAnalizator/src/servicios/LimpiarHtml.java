@@ -53,7 +53,7 @@ public class LimpiarHtml {
 					continue;
 				}
 
-				Note nota = diario.getNotaFromDocument(doc);
+				Note nota = diario.getNotaProcesadaFromDocument(doc);
 
 				guardarNota(nota, archivo);
 			}
@@ -61,7 +61,7 @@ public class LimpiarHtml {
 	}
 
 	public boolean limpiarDocumentoYGuardar(Document doc, String nombreArchivo) {
-		return guardarNota(diario.getNotaFromDocument(doc), nombreArchivo);
+		return guardarNota(diario.getNotaProcesadaFromDocument(doc), nombreArchivo);
 	}
 
 	/**
