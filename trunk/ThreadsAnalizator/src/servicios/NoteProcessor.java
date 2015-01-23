@@ -5,6 +5,7 @@ import org.jsoup.nodes.Element;
 
 import entities.DiarioDigital;
 import entities.FormatoSalida;
+import entities.Seccion;
 
 public abstract class NoteProcessor implements Runnable {
 
@@ -13,14 +14,21 @@ public abstract class NoteProcessor implements Runnable {
 	private String pathAGuardar;
 	private volatile DiarioDigital diario;
 	private FormatoSalida formatoSalida;
+	private NotesRecolator recolector;
+	private boolean override;
+	private Seccion seccion;
 
-	public NoteProcessor(String archivo, Element elem, String pathAGuardar, DiarioDigital diario, FormatoSalida formato) {
+	public NoteProcessor(NotesRecolator recolector, String archivo, Element elem, String pathAGuardar,
+			DiarioDigital diario, Seccion seccion, FormatoSalida formato, boolean override) {
 		super();
 		this.nombreArchivoAParsear = archivo;
 		this.elem = elem;
 		this.pathAGuardar = pathAGuardar;
 		this.diario = diario;
+		this.seccion = seccion;
 		this.formatoSalida = formato;
+		this.recolector = recolector;
+		this.override = override;
 	}
 
 	public Element getElem() {
@@ -41,6 +49,18 @@ public abstract class NoteProcessor implements Runnable {
 
 	public FormatoSalida getFormatoSalida() {
 		return formatoSalida;
+	}
+
+	public NotesRecolator getRecolector() {
+		return recolector;
+	}
+
+	public boolean isOverride() {
+		return this.override;
+	}
+
+	public Seccion getSeccion() {
+		return this.seccion;
 	}
 
 	@Override

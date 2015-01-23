@@ -33,7 +33,7 @@ public class WorkerDownload extends SwingWorker<Void, Integer> implements Observ
 		// actualizar el progressBar
 		System.out.println("por descargar....");
 		this.modeloDescargas.descargar();
-System.out.println("descargado?");
+		System.out.println("descargado?");
 		return null;
 	}
 
@@ -68,6 +68,10 @@ System.out.println("descargado?");
 		if (arg == null) {
 			this.lblProgreso.setText("Deteniendo... ");
 		}
-		publish(((AtomicInteger) arg).intValue());
+		if (arg instanceof Integer) {
+			publish((Integer) arg);
+		} else {
+			publish(((AtomicInteger) arg).intValue());
+		}
 	}
 }

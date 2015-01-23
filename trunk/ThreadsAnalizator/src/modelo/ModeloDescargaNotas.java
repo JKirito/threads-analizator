@@ -4,9 +4,12 @@ import java.io.File;
 
 import servicios.NotesRecolator;
 import entities.DiarioDigital;
+import entities.EconomiaLaNacion;
+import entities.EconomiaPagina12;
 import entities.FormatoSalida;
 import entities.LaNacion;
 import entities.Pagina12;
+import entities.Seccion;
 import entities.SeccionEconomia;
 
 public class ModeloDescargaNotas extends ModeloDescarga {
@@ -40,22 +43,23 @@ public class ModeloDescargaNotas extends ModeloDescarga {
 		this.descargaDetenida = false;
 
 		DiarioDigital diario = null;
-		// Seccion seccion = null; //TODO: necesario para la nota??
+		Seccion seccion = null; // TODO: necesario para la nota??
 		if (this.getDiarioDescarga().equals(Pagina12.NOMBRE_DIARIO)) {
 			diario = new Pagina12();
 			if (this.getSeccionDescarga().equals(SeccionEconomia.NOMBRE_SECCION)) {
-				// seccion = new EconomiaPagina12();
+				seccion = new EconomiaPagina12();
 			}
 		} else if (this.getDiarioDescarga().equals(LaNacion.NOMBRE_DIARIO)) {
 			diario = new LaNacion();
 			if (this.getSeccionDescarga().equals(SeccionEconomia.NOMBRE_SECCION)) {
-				// seccion = new EconomiaLaNacion();
+				seccion = new EconomiaLaNacion();
 			}
 		}
 		String pathOrigen = this.getRutaOrigen() + File.separatorChar;
 		String pathAGuardar = this.getRutaDestino() + File.separatorChar;
 		int cantHilos = 20;// TODO: pedir por pantalla!!
-		noteRecolator = new NotesRecolator(pathOrigen, pathAGuardar, cantHilos, diario, this.getFormatoOutput());
+		noteRecolator = new NotesRecolator(pathOrigen, pathAGuardar, cantHilos, diario, seccion,
+				this.getFormatoOutput(), this.isOverride());
 		noteRecolator.addObserver(this.getSwingWorker());
 		System.out.println("por iniciar...");
 		noteRecolator.iniciar();
