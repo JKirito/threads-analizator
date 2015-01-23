@@ -9,17 +9,19 @@ import org.jsoup.select.Elements;
 
 import servicios.LimpiarHtml;
 import servicios.NoteProcessor;
+import servicios.NotesRecolator;
 import Utils.StoreFile;
 import entities.DiarioDigital;
 import entities.FormatoHtml;
 import entities.FormatoSalida;
 import entities.FormatoTexto;
+import entities.Seccion;
 
 public class NoteProcessorPagina12 extends NoteProcessor {
 
-	public NoteProcessorPagina12(String archivo, Element elem, String pathDestino, DiarioDigital diario,
-			FormatoSalida formato) {
-		super(archivo, elem, pathDestino, diario, formato);
+	public NoteProcessorPagina12(NotesRecolator recolator, String archivo, Element elem, String pathDestino,
+			DiarioDigital diario, Seccion seccion, FormatoSalida formato, boolean override) {
+		super(recolator, archivo, elem, pathDestino, diario, seccion, formato, override);
 	}
 
 	@Override
