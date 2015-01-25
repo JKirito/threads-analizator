@@ -6,14 +6,16 @@ import java.io.IOException;
 
 import servicios.WorkerDownload;
 import controlador.ControladorDescargas;
+import entities.DiarioDigital;
 import entities.FormatoSalida;
+import entities.Seccion;
 
 public abstract class ModeloDescarga {
 
 	private String rutaDestino;
 	private String modoDescarga;
-	private String diarioDescarga;
-	private String seccionDescarga;
+	private DiarioDigital diarioDescarga;
+	private Seccion seccionDescarga;
 	/**
 	 * El el modo de descarga de Tapas, representa la cantidad que el usuario elige a descargar.
 	 * En el modo de descarga de Notas, representa la cantidad de archivos que hay en la carpeta origen,
@@ -35,7 +37,7 @@ public abstract class ModeloDescarga {
 		super();
 	}
 
-	public ModeloDescarga(String rutaDestino, String modoDescarga, String diarioDescarga, String seccionDescarga,
+	public ModeloDescarga(String rutaDestino, String modoDescarga, DiarioDigital diarioDescarga, Seccion seccionDescarga,
 			boolean override, FormatoSalida formatoOutput) {
 		super();
 		this.rutaDestino = rutaDestino;
@@ -62,19 +64,19 @@ public abstract class ModeloDescarga {
 		this.modoDescarga = modoDescarga;
 	}
 
-	public String getDiarioDescarga() {
+	public DiarioDigital getDiarioDescarga() {
 		return diarioDescarga;
 	}
 
-	public void setDiarioDescarga(String diarioDescarga) {
+	public void setDiarioDescarga(DiarioDigital diarioDescarga) {
 		this.diarioDescarga = diarioDescarga;
 	}
 
-	public String getSeccionDescarga() {
+	public Seccion getSeccionDescarga() {
 		return seccionDescarga;
 	}
 
-	public void setSeccionDescarga(String seccionDescarga) {
+	public void setSeccionDescarga(Seccion seccionDescarga) {
 		this.seccionDescarga = seccionDescarga;
 	}
 
@@ -108,13 +110,15 @@ public abstract class ModeloDescarga {
 
 	public String validarDatos() {
 		String errores = "";
-		if (this.getDiarioDescarga() == null || this.getDiarioDescarga().isEmpty()) {
+		if (this.getDiarioDescarga() == null){
+//				|| this.getDiarioDescarga().getNombreDiario().isEmpty()) {
 			errores += "-" + MSJ_DIARIO_DESCARGA_VACIO + "\n";
 		}
 		if (this.getRutaDestino() == null || this.getRutaDestino().isEmpty()) {
 			errores += "-" + MSJ_CARPETADESTINO_VACIO + "\n";
 		}
-		if (this.getSeccionDescarga() == null || this.getSeccionDescarga().isEmpty()) {
+		if (this.getSeccionDescarga() == null){
+//				|| this.getSeccionDescarga().isEmpty()) {
 			errores += "-" + MSJ_SECCION_DESCARGA_VACIO + "\n";
 		}
 		if (this.getFormatoOutput() == null) {

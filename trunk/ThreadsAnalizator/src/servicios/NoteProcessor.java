@@ -68,4 +68,23 @@ public abstract class NoteProcessor implements Runnable {
 
 	public abstract void guardarNotaHTML(Document doc, String titulo);
 
+	public String getNombreArchivoAGuardar() {
+		String nombreArchivoAGuarduar = this.getNombreArchivoAParsear().replace(".html", "_" + this.getElem().text());
+
+		if (nombreArchivoAGuarduar.contains("/"))
+			nombreArchivoAGuarduar = nombreArchivoAGuarduar.replace("/", "-");
+		if (nombreArchivoAGuarduar.contains(";"))
+			nombreArchivoAGuarduar = nombreArchivoAGuarduar.replace(";", ",");
+		// TODO! si contiene ciertos caracteres,guarda caracteres "raros" en el
+		// nombrearchivo
+		// "temporalmente", si tiene estos caracteres, los saco
+		if (nombreArchivoAGuarduar.contains("")) {
+			nombreArchivoAGuarduar = nombreArchivoAGuarduar.replaceAll("", "");
+		}
+		if (nombreArchivoAGuarduar.contains("")) {
+			nombreArchivoAGuarduar = nombreArchivoAGuarduar.replaceAll("", "");
+		}
+
+		return nombreArchivoAGuarduar;
+	}
 }
