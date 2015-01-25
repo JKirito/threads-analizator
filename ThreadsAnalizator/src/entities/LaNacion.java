@@ -87,17 +87,16 @@ public class LaNacion extends DiarioDigital {
 		// Elements firma = encabezado.getElementsByAttributeValue("class",
 		// "firma");
 		encabezado.getElementsByClass("firma").remove();
-		encabezado.getElementsByClass("bajada").remove();
+//		encabezado.getElementsByClass("bajada").remove();
 		Elements volanta = encabezado.getElementsByAttributeValue("class", "volanta");
 		Elements titulo = encabezado.getAllElements().select("h1");
 		Elements descripcion = encabezado.getAllElements().select("p");
 		descripcion.removeAll(volanta);
 		Element cuerpo = doc.getElementById("cuerpo");
-		Elements archRel = cuerpo.getElementsByAttributeValue("class", "archivos-relacionados");
-		Elements fin = cuerpo.getElementsByAttributeValue("class", "fin");
+//		Elements archRel = cuerpo.getElementsByAttributeValue("class", "archivos-relacionados");
+//		Elements fin = cuerpo.getElementsByAttributeValue("class", "fin");
 
-		return new Note(volanta.text(), titulo.text(), descripcion.text(), cuerpo.text().replace(archRel.text(), "")
-				.replace(fin.text(), ""), "", null);
+		return new Note(volanta.text(), titulo.text(), descripcion.text(), cuerpo.text(), "", null);
 	}
 
 	public Document getNotaFromDocument(Document doc) {

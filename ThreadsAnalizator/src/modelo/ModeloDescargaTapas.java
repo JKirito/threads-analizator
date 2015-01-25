@@ -6,14 +6,9 @@ import java.util.Date;
 import servicios.PageDownloader;
 import Utils.Utils;
 import entities.DiarioDigital;
-import entities.EconomiaLaNacion;
-import entities.EconomiaPagina12;
 import entities.FormatoHtml;
 import entities.FormatoSalida;
-import entities.LaNacion;
-import entities.Pagina12;
 import entities.Seccion;
-import entities.SeccionEconomia;
 
 public class ModeloDescargaTapas extends ModeloDescarga {
 
@@ -22,7 +17,7 @@ public class ModeloDescargaTapas extends ModeloDescarga {
 	private Date fechaDescargaHasta;
 	private PageDownloader pageDownloader;
 
-	public ModeloDescargaTapas(String rutaDestino, String modoDescarga, String diarioDescarga, String seccionDescarga,
+	public ModeloDescargaTapas(String rutaDestino, String modoDescarga, DiarioDigital diarioDescarga, Seccion seccionDescarga,
 			boolean override, FormatoSalida formatoOutput, Date fechaDescargaHasta, int cantTapasDescargar) {
 		super(rutaDestino, modoDescarga, diarioDescarga, seccionDescarga, override, formatoOutput);
 		this.fechaDescargaHasta = fechaDescargaHasta;
@@ -45,25 +40,25 @@ public class ModeloDescargaTapas extends ModeloDescarga {
 		this.setDescargando(true);
 		this.descargaDetenida = false;
 		System.out.println("Descargar TAPAS!!!!!!!!!!!!!!");
-		DiarioDigital diario = null;
-		Seccion seccion = null;
-		if (this.getDiarioDescarga().equals(Pagina12.NOMBRE_DIARIO)) {
-			diario = new Pagina12();
-			if (this.getSeccionDescarga().equals(SeccionEconomia.NOMBRE_SECCION)) {
-				seccion = new EconomiaPagina12();
-			}
-		} else if (this.getDiarioDescarga().equals(LaNacion.NOMBRE_DIARIO)) {
-			diario = new LaNacion();
-			if (this.getSeccionDescarga().equals(SeccionEconomia.NOMBRE_SECCION)) {
-				seccion = new EconomiaLaNacion();
-			}
-		}
+//		DiarioDigital diario = null;
+//		Seccion seccion = null;
+//		if (this.getDiarioDescarga().equals(Pagina12.NOMBRE_DIARIO)) {
+//			diario = new Pagina12();
+//			if (this.getSeccionDescarga().equals(SeccionEconomia.NOMBRE_SECCION)) {
+//				seccion = new EconomiaPagina12();
+//			}
+//		} else if (this.getDiarioDescarga().equals(LaNacion.NOMBRE_DIARIO)) {
+//			diario = new LaNacion();
+//			if (this.getSeccionDescarga().equals(SeccionEconomia.NOMBRE_SECCION)) {
+//				seccion = new EconomiaLaNacion();
+//			}
+//		}
 
 		String pathAGuardar = this.getRutaDestino() + File.separatorChar;
 		Date fechaHasta = this.getFechaDescargaHasta();
 		int diasARecopílar = this.getCantTapasDescargar();
 		FormatoSalida formatoSalida = new FormatoHtml();
-		this.pageDownloader = new PageDownloader(diario, seccion, formatoSalida, pathAGuardar, fechaHasta,
+		this.pageDownloader = new PageDownloader(this.getDiarioDescarga(), this.getSeccionDescarga(), formatoSalida, pathAGuardar, fechaHasta,
 				diasARecopílar, this.isOverride());
 		this.pageDownloader.addObserver(this.getSwingWorker());
 		this.pageDownloader.download();

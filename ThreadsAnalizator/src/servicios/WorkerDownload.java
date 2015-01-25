@@ -1,5 +1,6 @@
 package servicios;
 
+import java.io.File;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -10,7 +11,10 @@ import javax.swing.JProgressBar;
 import javax.swing.SwingWorker;
 
 import modelo.ModeloDescarga;
+import modelo.ModeloDescargaNotas;
 import modelo.ModeloDescargaTapas;
+
+import org.jsoup.select.Elements;
 
 public class WorkerDownload extends SwingWorker<Void, Integer> implements Observer {
 	private final JLabel lblProgreso;
@@ -21,7 +25,11 @@ public class WorkerDownload extends SwingWorker<Void, Integer> implements Observ
 		lblProgreso = etiquetaProgreso;
 		progressBar = barraProgreso;
 		this.modeloDescargas = modelo;
+		if (this.modeloDescargas instanceof ModeloDescargaNotas) {
+			this.modeloDescargas.setCantTapasDescargar(getCantNotasDescargar());
+		}
 		this.progressBar.setMaximum(this.modeloDescargas.getCantTapasDescargar());
+		this.progressBar.setValue(0);
 	}
 
 	@Override
@@ -31,9 +39,7 @@ public class WorkerDownload extends SwingWorker<Void, Integer> implements Observ
 		// Comienzo descarga. En el transcurso de la descarga me avisa la cant.
 		// que va descargando para
 		// actualizar el progressBar
-		System.out.println("por descargar....");
 		this.modeloDescargas.descargar();
-		System.out.println("descargado?");
 		return null;
 	}
 
@@ -56,22 +62,43 @@ public class WorkerDownload extends SwingWorker<Void, Integer> implements Observ
 	 */
 	@Override
 	protected void process(List<Integer> chunks) {
-		int cantDescargados = chunks.get(0);
+		int cantPorDescargar = chunks.get(0);
+		String msjDescargando = "";
+		this.progressBar.setValue(cantPorDescargar);
 		int total = this.modeloDescargas.getCantTapasDescargar();
-		progressBar.setValue(cantDescargados);
-		String msjDescargando = modeloDescargas instanceof ModeloDescargaTapas ? "Descargando.. " : "Procesando.. ";
-		this.lblProgreso.setText(msjDescargando + cantDescargados + " de " + total);
+		if (modeloDescargas instanceof ModeloDescargaTapas) {
+			msjDescargando = "Descargando.. " + cantPorDescargar + " de " + total + " tapas";
+		} else if (modeloDescargas instanceof ModeloDescargaNotas) {
+			msjDescargando = "Descargando.. " + cantPorDescargar + " de " + total + " notas";
+		}
+		this.lblProgreso.setText(msjDescargando);
 	}
 
 	@Override
 	public void update(Observable o, Object arg) {
-		if (arg == null) {
-			this.lblProgreso.setText("Deteniendo... ");
-		}
 		if (arg instanceof Integer) {
 			publish((Integer) arg);
 		} else {
 			publish(((AtomicInteger) arg).intValue());
 		}
+	}
+
+	private int getCantNotasDescargar() {
+		int i = 0;
+		// Obtener la carpeta donde se encuentran todos los archivos
+		File carpeta = new File(((ModeloDescargaNotas) this.modeloDescargas).getRutaOrigen());
+		if (carpeta.isDirectory()) {
+			// Recorrer cada archivo de la carpeta
+			for (String archivo : carpeta.list()) {
+				File file = new File(carpeta.getAbsolutePath() + File.separator + archivo);
+				if (file.isFile()) {
+					// Obtener los links asociados a las notas de cada archivo
+					Elements notasABuscar = ((ModeloDescargaNotas) this.modeloDescargas).getDiarioDescarga()
+							.getElementNotasABuscar(file);
+					i += notasABuscar.size();
+				}
+			}
+		}
+		return i;
 	}
 }

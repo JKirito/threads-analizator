@@ -51,8 +51,8 @@ public class NotesRecolator extends Observable {
 	private boolean override;
 	private Seccion seccion;
 
-	public NotesRecolator(String carpetaOrigen, String carpetaDestino, int cantHilos, DiarioDigital diario, Seccion seccion,
-			FormatoSalida formato, boolean override) {
+	public NotesRecolator(String carpetaOrigen, String carpetaDestino, int cantHilos, DiarioDigital diario,
+			Seccion seccion, FormatoSalida formato, boolean override) {
 		this.pathOrigen = carpetaOrigen;
 		this.pathAGuardar = carpetaDestino;
 		this.THREADS_NUMBER = cantHilos;
@@ -68,38 +68,23 @@ public class NotesRecolator extends Observable {
 		// Obtener la carpeta donde se encuentran todos los archivos
 		File carpeta = new File(pathOrigen);
 		if (carpeta.isDirectory()) {
-			int i = 1;
 			// Recorrer cada archivo de la carpeta
 			for (String archivo : carpeta.list()) {
 				File file = new File(carpeta.getAbsolutePath() + "//" + archivo);
 				if (file.isFile() && !detener) {
-					System.out.println("inteeeeeeeeeegeeeeeeeeeeeer: " + i);
-					this.setChanged();
-					this.notifyObservers(this.descargasARealizar);
-					// Doy un pequeño tiempo para que se actualice el contador
-					// del
-					// Jprogress
-					try {
-						Thread.sleep(10);
-					} catch (InterruptedException e1) {
-						e1.printStackTrace();
-					}
-
-					i++;
 
 					// Obtener los links asociados a las notas de cada archivo
 					Elements notasABuscar = diario.getElementNotasABuscar(file);
 					for (Element E : notasABuscar) {
 						NoteProcessor np = null;
 						if (diario.isPagina12()) {
-							System.out.println("Página 12,,,,");
-							np = new NoteProcessorPagina12(this, archivo, E, pathAGuardar, diario, seccion, formatoSalida, override);
+							np = new NoteProcessorPagina12(this, archivo, E, pathAGuardar, diario, seccion,
+									formatoSalida, override);
 						}
 						if (diario.isLaNacion()) {
-							System.out.println("La nacion,,,,");
-							np = new NoteProcessorLaNacion(this, archivo, E, pathAGuardar, diario, seccion, formatoSalida, override);
+							np = new NoteProcessorLaNacion(this, archivo, E, pathAGuardar, diario, seccion,
+									formatoSalida, override);
 						}
-						System.out.println("Active COUNT: " + ((ThreadPoolExecutor) executor).getActiveCount());
 						while (((ThreadPoolExecutor) executor).getActiveCount() == THREADS_NUMBER) {
 							try {
 								Thread.sleep(300);
@@ -133,6 +118,18 @@ public class NotesRecolator extends Observable {
 		}
 	}
 
+	public void mostrarCambiosParaJprogres(Integer cantActual) {
+		this.setChanged();
+		this.notifyObservers(cantActual);
+		// Doy un pequeño tiempo para que se actualice el contador
+		// del Jprogress
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e1) {
+			e1.printStackTrace();
+		}
+	}
+
 	public void detenerEjecucion() {
 		this.detener = true;
 	}
@@ -159,6 +156,7 @@ public class NotesRecolator extends Observable {
 
 	public void incrementDescargasARealizar() {
 		this.descargasARealizar.incrementAndGet();
+		mostrarCambiosParaJprogres(getDescargasARealizar().intValue());
 	}
 
 	public void incrementDescargasRealizadas() {
@@ -176,4 +174,9 @@ public class NotesRecolator extends Observable {
 	public void addErroresDescarga(String error) {
 		this.erroresDescarga.add(error);
 	}
+
+	public List<String> getErroresDescarga() {
+		return erroresDescarga;
+	}
+
 }

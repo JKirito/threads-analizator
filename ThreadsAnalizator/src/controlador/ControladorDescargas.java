@@ -23,8 +23,12 @@ import vista.SetupGetDirVista;
 import vista.VistaDescargas;
 import vista.VistaResultadoDescarga;
 import Utils.SwingUtils;
+import entities.EconomiaLaNacion;
+import entities.EconomiaPagina12;
 import entities.FormatoHtml;
 import entities.FormatoTexto;
+import entities.LaNacion;
+import entities.Pagina12;
 
 public class ControladorDescargas implements ActionListener {
 
@@ -98,9 +102,10 @@ public class ControladorDescargas implements ActionListener {
 			} else {
 				salir = this.vistaDescargas.solicitarRespuestaAUsuario("¿Desea salir del sistema?");
 			}
-			boolean guardarOpciones = this.vistaDescargas
-					.solicitarRespuestaAUsuario("¿Desea guardar las opciones elegidas para la próxima vez que use el programa? :)");
+
 			if (salir) {
+				boolean guardarOpciones = this.vistaDescargas
+						.solicitarRespuestaAUsuario("¿Desea guardar las opciones elegidas para la próxima vez que use el programa? :)");
 				if (guardarOpciones) {
 					try {
 						guardarOpciones();
@@ -230,16 +235,19 @@ public class ControladorDescargas implements ActionListener {
 	}
 
 	private void cargarDatosModoDescargaComunes() {
-		// Cargar seccion
-		if (vistaDescargas.getChckbxEconomia().isSelected()) {
-			this.modeloDescarga.setSeccionDescarga(vistaDescargas.getChckbxEconomia().getText());
-		}
 
-		// Cargar Diario
+
+		// Cargar Diario y seccion
 		if (vistaDescargas.getRadioBtnLaNacion().isSelected()) {
-			this.modeloDescarga.setDiarioDescarga(vistaDescargas.getRadioBtnLaNacion().getText());
+			this.modeloDescarga.setDiarioDescarga(new LaNacion());
+			if (vistaDescargas.getChckbxEconomia().isSelected()) {
+				this.modeloDescarga.setSeccionDescarga(new EconomiaLaNacion());
+			}
 		} else if (vistaDescargas.getRadioBtnPagina12().isSelected()) {
-			this.modeloDescarga.setDiarioDescarga(vistaDescargas.getRadioBtnPagina12().getText());
+			this.modeloDescarga.setDiarioDescarga(new Pagina12());
+			if (vistaDescargas.getChckbxEconomia().isSelected()) {
+				this.modeloDescarga.setSeccionDescarga(new EconomiaPagina12());
+			}
 		}
 		// Cargar formato Salida
 		if (vistaDescargas.getRadioBtnHTML().isSelected()) {
