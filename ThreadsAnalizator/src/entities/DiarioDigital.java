@@ -74,4 +74,6 @@ public abstract class DiarioDigital {
 	public abstract Note getNotaProcesadaFromDocument(Document doc);
 
 	public abstract Document getNotaFromDocument(Document doc);
+
+	public abstract String getlinkNota(String attr);
 }

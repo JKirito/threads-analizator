@@ -87,14 +87,19 @@ public class LaNacion extends DiarioDigital {
 		// Elements firma = encabezado.getElementsByAttributeValue("class",
 		// "firma");
 		encabezado.getElementsByClass("firma").remove();
-//		encabezado.getElementsByClass("bajada").remove();
+		// encabezado.getElementsByClass("bajada").remove();
 		Elements volanta = encabezado.getElementsByAttributeValue("class", "volanta");
 		Elements titulo = encabezado.getAllElements().select("h1");
 		Elements descripcion = encabezado.getAllElements().select("p");
 		descripcion.removeAll(volanta);
 		Element cuerpo = doc.getElementById("cuerpo");
-//		Elements archRel = cuerpo.getElementsByAttributeValue("class", "archivos-relacionados");
-//		Elements fin = cuerpo.getElementsByAttributeValue("class", "fin");
+
+		if (cuerpo.getElementsByClass("foto-encolumnada") != null) {
+			cuerpo.getElementsByClass("foto-encolumnada").remove();
+		}
+		// Elements archRel = cuerpo.getElementsByAttributeValue("class",
+		// "archivos-relacionados");
+		// Elements fin = cuerpo.getElementsByAttributeValue("class", "fin");
 
 		return new Note(volanta.text(), titulo.text(), descripcion.text(), cuerpo.text(), "", null);
 	}
@@ -122,5 +127,10 @@ public class LaNacion extends DiarioDigital {
 		nd.appendChild(encabezado).appendChild(cuerpo);
 
 		return nd;
+	}
+
+	@Override
+	public String getlinkNota(String link) {
+		return link;
 	}
 }

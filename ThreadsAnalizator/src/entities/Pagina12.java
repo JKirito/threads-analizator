@@ -63,8 +63,10 @@ public class Pagina12 extends DiarioDigital {
 	public Elements getElementNotasABuscar(File file) {
 		Element notasABuscar = null;
 		try {
-			notasABuscar = Jsoup.parse(file, this.getCharsetName()).getElementsByClass(this.getNombreGrupoNoticias())
-					.first();
+			// notasABuscar = Jsoup.parse(file,
+			// this.getCharsetName()).getElementsByClass(this.getNombreGrupoNoticias())
+			// .first();
+			notasABuscar = Jsoup.parse(file, this.getCharsetName()).body();
 		} catch (IOException e) {
 			return null;
 		}
@@ -98,12 +100,30 @@ public class Pagina12 extends DiarioDigital {
 
 	@Override
 	public Document getNotaFromDocument(Document doc) {
-		try {
-			throw new Exception("Aun no implementado!");
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if (doc.getElementsByAttributeValue("class", "nota top12") == null) {
+			return null;
 		}
-		return null;
+		Elements nota = doc.getElementsByAttributeValue("class", "nota top12");
+
+		// Eliminar datos innecesarios
+		for (int i = 0; i < nota.size(); i++) {
+			Element e = nota.get(i);
+			if (e.getElementsByClass("botones") != null) {
+				e.getElementsByClass("botones").remove();
+			}
+			if (e.getElementsByClass("pienota") != null) {
+				e.getElementsByClass("pienota").remove();
+			}
+		}
+
+		Document nd = new Document("");
+		nd.append(nota.html());
+
+		return nd;
+	}
+
+	@Override
+	public String getlinkNota(String link) {
+		return "http://pagina12.com.ar" + link;
 	}
 }
