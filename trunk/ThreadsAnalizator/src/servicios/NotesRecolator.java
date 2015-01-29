@@ -12,8 +12,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import servicios_LaNacion.NoteProcessorLaNacion;
-import servicios_Pagina12.NoteProcessorPagina12;
 import entities.DiarioDigital;
 import entities.FormatoSalida;
 import entities.Seccion;
@@ -77,14 +75,7 @@ public class NotesRecolator extends Observable {
 					Elements notasABuscar = diario.getElementNotasABuscar(file);
 					for (Element E : notasABuscar) {
 						NoteProcessor np = null;
-						if (diario.isPagina12()) {
-							np = new NoteProcessorPagina12(this, archivo, E, pathAGuardar, diario, seccion,
-									formatoSalida, override);
-						}
-						if (diario.isLaNacion()) {
-							np = new NoteProcessorLaNacion(this, archivo, E, pathAGuardar, diario, seccion,
-									formatoSalida, override);
-						}
+						np = new NoteProcessor(this, archivo, E, pathAGuardar, diario, seccion, formatoSalida, override);
 						while (((ThreadPoolExecutor) executor).getActiveCount() == THREADS_NUMBER) {
 							try {
 								Thread.sleep(300);
@@ -119,6 +110,9 @@ public class NotesRecolator extends Observable {
 	}
 
 	public void mostrarCambiosParaJprogres(Integer cantActual) {
+		if (detener) {
+			return;
+		}
 		this.setChanged();
 		this.notifyObservers(cantActual);
 		// Doy un pequeño tiempo para que se actualice el contador

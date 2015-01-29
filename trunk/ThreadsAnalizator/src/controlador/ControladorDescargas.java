@@ -431,6 +431,7 @@ public class ControladorDescargas implements ActionListener {
 		SwingUtils.setEnableContainer(vistaDescargas.getPanelCarpetaOrigen(), true);
 		SwingUtils.setEnableContainer(vistaDescargas.getRadioBtnHTML(), true);
 		SwingUtils.setEnableContainer(vistaDescargas.getRadioBtnTXT(), true);
+		SwingUtils.setEnableContainer(vistaDescargas.getPanelFecha(), true);
 	}
 
 	private void habilitarCamposTapa() {

@@ -25,6 +25,7 @@ public class WorkerDownload extends SwingWorker<Void, Integer> implements Observ
 		lblProgreso = etiquetaProgreso;
 		progressBar = barraProgreso;
 		this.modeloDescargas = modelo;
+		this.lblProgreso.setText("Iniciando...");
 		if (this.modeloDescargas instanceof ModeloDescargaNotas) {
 			this.modeloDescargas.setCantTapasDescargar(getCantNotasDescargar());
 		}
@@ -62,6 +63,10 @@ public class WorkerDownload extends SwingWorker<Void, Integer> implements Observ
 	 */
 	@Override
 	protected void process(List<Integer> chunks) {
+		if(this.modeloDescargas.isDescargaDetenida()){
+			this.lblProgreso.setText("Deteniendo...");
+			return;
+		}
 		int cantPorDescargar = chunks.get(0);
 		String msjDescargando = "";
 		this.progressBar.setValue(cantPorDescargar);
