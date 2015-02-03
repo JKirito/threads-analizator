@@ -1,8 +1,10 @@
 package Utils;
 
+import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.Writer;
 
 public class StoreFile {
@@ -68,11 +70,13 @@ public class StoreFile {
 		if(this.textoAGuardar.contains("")){
 			this.textoAGuardar = this.textoAGuardar.replaceAll("", "-");
 		}
-
+		if(this.textoAGuardar.contains("›")){
+			this.textoAGuardar = this.textoAGuardar.replaceAll("›", ">");
+		}
 
 		File page = new File(this.path + this.nombreArchivo + this.extension);
-//		Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(page), this.charset));
-		Writer out = new FileWriter(page);
+		Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(page), this.charset));
+//		Writer out = new FileWriter(page);
 		try {
 			out.write(this.textoAGuardar);
 		} catch (Exception e) {

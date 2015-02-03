@@ -93,21 +93,35 @@ public class Pagina12 extends DiarioDigital {
 	}
 
 	@Override
-	public Note getNotaProcesadaFromDocument(Document docPreProcesado) {
-//		Document docPreProcesado = this.getNotaPreProcesadaFromDocument(doc);
-		Elements volanta = docPreProcesado.getElementsByClass("volanta");
+	public Note getNotaProcesadaFromDocument(Document doc) {
+		Elements volanta = doc.getElementsByClass("volanta");
 		// Eliminar datos innecesarios
 		for (int i = 0; i < volanta.size(); i++) {
 			Element e = volanta.get(i);
-			if (e.getElementsByClass("a") != null) {
-				e.getElementsByClass("a").remove();
+			if (e.getElementsByClass("cprincipal") != null) {
+				e.getElementsByClass("cprincipal").remove();
+			}
+			if (e.getElementsByClass("autor") != null) {
+				e.getElementsByClass("autor").remove();
 			}
 		}
-		Elements titulo = docPreProcesado.getAllElements().select("h2");
-		Elements descripcion = docPreProcesado.getElementsByClass("intro");
-		Element cuerpo = docPreProcesado.getElementById("cuerpo");
+		Elements titulo = doc.getAllElements().select("h2");
+		Elements descripcion = doc.getElementsByClass("intro");
+		Element cuerpo = doc.getElementById("cuerpo");
 
-		return new Note(volanta.text(), titulo.text(), descripcion.text(), cuerpo.text(), "", null);
+		if (cuerpo.getElementsByClass("margen0") != null) {
+			if (cuerpo.getElementsByClass("margen0").text().length() < 70) {
+				cuerpo.getElementsByClass("margen0").remove();
+			}
+		}
+		if (cuerpo.getElementsByTag("a") != null) {
+			cuerpo.getElementsByTag("a").remove();
+		}
+		if (cuerpo.getElementsByClass("autor") != null) {
+			cuerpo.getElementsByClass("autor").remove();
+		}
+
+		return new Note(volanta.text().replace("›", ""), titulo.text(), descripcion.text(), cuerpo.text(), "", null);
 	}
 
 	@Override
