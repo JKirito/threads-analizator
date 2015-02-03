@@ -3,7 +3,7 @@ package entities;
 public abstract class Seccion {
 	private String codigoSeccion;
 	// private String nombreDiario;
-	private String nombreSección;
+	private String nombreSeccion;
 
 	public String getCodigoSeccion() {
 		return codigoSeccion;
@@ -13,11 +13,11 @@ public abstract class Seccion {
 		this.codigoSeccion = nombreSeccion;
 	}
 
-	public String getNombreSección() {
-		return nombreSección;
+	public String getNombreSeccion() {
+		return nombreSeccion;
 	}
 
-	public void setNombreSección(String nombreSección) {
-		this.nombreSección = nombreSección;
+	public void setNombreSeccion(String nombreSeccion) {
+		this.nombreSeccion = nombreSeccion;
 	}
 }

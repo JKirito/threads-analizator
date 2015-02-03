@@ -93,13 +93,25 @@ public class Pagina12 extends DiarioDigital {
 	}
 
 	@Override
-	public Note getNotaProcesadaFromDocument(Document doc) {
-		// TODO Auto-generated method stub
-		return null;
+	public Note getNotaProcesadaFromDocument(Document docPreProcesado) {
+//		Document docPreProcesado = this.getNotaPreProcesadaFromDocument(doc);
+		Elements volanta = docPreProcesado.getElementsByClass("volanta");
+		// Eliminar datos innecesarios
+		for (int i = 0; i < volanta.size(); i++) {
+			Element e = volanta.get(i);
+			if (e.getElementsByClass("a") != null) {
+				e.getElementsByClass("a").remove();
+			}
+		}
+		Elements titulo = docPreProcesado.getAllElements().select("h2");
+		Elements descripcion = docPreProcesado.getElementsByClass("intro");
+		Element cuerpo = docPreProcesado.getElementById("cuerpo");
+
+		return new Note(volanta.text(), titulo.text(), descripcion.text(), cuerpo.text(), "", null);
 	}
 
 	@Override
-	public Document getNotaFromDocument(Document doc) {
+	public Document getNotaPreProcesadaFromDocument(Document doc) {
 		if (doc.getElementsByAttributeValue("class", "nota top12") == null) {
 			return null;
 		}
@@ -117,8 +129,7 @@ public class Pagina12 extends DiarioDigital {
 		}
 
 		Document nd = new Document("");
-		nd.append(nota.html());
-
+		nd.append(doc.head().html()).append(nota.html());
 		return nd;
 	}
 

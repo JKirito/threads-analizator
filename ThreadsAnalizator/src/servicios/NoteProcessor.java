@@ -94,11 +94,13 @@ public class NoteProcessor implements Runnable {
 		Document doc = null;
 		try {
 			doc = Jsoup.connect(this.getDiario().getlinkNota(this.getElem().attr("href"))).timeout(0).get();
+//			String url = this.getDiario().getlinkNota(this.getElem().attr("href"));
+//			doc = Jsoup.parse(new URL(url).openStream(), this.diario.getCharsetName(), url);
 			this.getRecolector().incrementDescargasARealizar();
 		} catch (UnknownHostException e) {
 			this.getRecolector().addErroresDescarga(
 					"No se pudo descargar la nota del diario " + this.getDiario().getNombreDiario() + ", sección "
-							+ this.getSeccion().getNombreSección() + ": " + this.getElem().attr("href")
+							+ this.getSeccion().getNombreSeccion() + ": " + this.getElem().attr("href")
 							+ ". Esto puede deberse a una desconexión de internet.\r\n");
 			this.getRecolector().incrementDescargasFallidas();
 			this.getRecolector().incrementDescargasARealizar();
@@ -106,7 +108,7 @@ public class NoteProcessor implements Runnable {
 		} catch (SocketTimeoutException e) {
 			this.getRecolector().addErroresDescarga(
 					"No se pudo descargar la nota del diario del diario " + this.getDiario().getNombreDiario()
-							+ ", sección " + this.getSeccion().getNombreSección() + ": " + this.getElem().attr("href")
+							+ ", sección " + this.getSeccion().getNombreSeccion() + ": " + this.getElem().attr("href")
 							+ ". Error por Time out.\r\n");
 			this.getRecolector().incrementDescargasFallidas();
 			this.getRecolector().incrementDescargasARealizar();
@@ -114,7 +116,7 @@ public class NoteProcessor implements Runnable {
 		} catch (IOException e) {
 			this.getRecolector().addErroresDescarga(
 					"No se pudo descargar la nota del diario del diario " + this.getDiario().getNombreDiario()
-							+ ", sección " + this.getSeccion().getNombreSección() + ": " + this.getElem().attr("href")
+							+ ", sección " + this.getSeccion().getNombreSeccion() + ": " + this.getElem().attr("href")
 							+ ". Error desconocido.\r\n");
 			this.getRecolector().incrementDescargasFallidas();
 			this.getRecolector().incrementDescargasARealizar();
@@ -135,14 +137,13 @@ public class NoteProcessor implements Runnable {
 		// Element encabezado = doc.getElementById("encabezado");
 		// Elements titulo = encabezado.getAllElements().select("h1");
 		// String nombreArchivo = titulo.text();
-
-		Document nuevoDoc = this.getDiario().getNotaFromDocument(doc);
+		Document nuevoDoc = this.getDiario().getNotaPreProcesadaFromDocument(doc);
 
 		if (this.getFormatoSalida() instanceof FormatoHtml) {
 			guardarNotaHTML(nuevoDoc, nombreArchivoAGuarduar);
 			this.getRecolector().incrementDescargasRealizadas();
 		} else if (this.getFormatoSalida() instanceof FormatoTexto) {
-			LimpiarHtml limpiador = new LimpiarHtml(this.getPathAGuardar(), this.getDiario());
+			LimpiarHtml limpiador = new LimpiarHtml(this.getPathAGuardar(), this.getDiario(), this.isOverride());
 			limpiador.limpiarDocumentoYGuardar(nuevoDoc, nombreArchivoAGuarduar);
 			this.getRecolector().incrementDescargasRealizadas();
 		}
