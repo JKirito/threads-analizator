@@ -137,24 +137,24 @@ public class PageDownloader extends Observable {
 				page = Jsoup.connect(linkActual).timeout(0).get();
 				if (!diario.esValido(page)) {
 					erroresDescarga.add("Al parecer " + diario.getNombreDiario() + " no tiene noticias en la sección "
-							+ seccion.getNombreSección() + " del día: " + fecha + ".\r\n");
+							+ seccion.getNombreSeccion() + " del día: " + fecha + ".\r\n");
 					descargasFallidas.incrementAndGet();
 					return;
 				}
 			} catch (UnknownHostException e) {
 				erroresDescarga.add("No se pudo descargar el diario " + diario.getNombreDiario() + ", sección "
-						+ seccion.getNombreSección() + " del día: " + fecha
+						+ seccion.getNombreSeccion() + " del día: " + fecha
 						+ ". Esto puede deberse a una desconexión de internet.\r\n");
 				descargasFallidas.incrementAndGet();
 				return;
 			} catch (SocketTimeoutException e) {
 				erroresDescarga.add("No se pudo descargar el diario " + diario.getNombreDiario() + ", sección "
-						+ seccion.getNombreSección() + " del día: " + fecha + ". Error por Time out.\r\n");
+						+ seccion.getNombreSeccion() + " del día: " + fecha + ". Error por Time out.\r\n");
 				descargasFallidas.incrementAndGet();
 				return;
 			} catch (IOException e) {
 				erroresDescarga.add("No se pudo descargar el diario " + diario.getNombreDiario() + ", sección "
-						+ seccion.getNombreSección() + " del día: " + fecha + ".\r\n");
+						+ seccion.getNombreSeccion() + " del día: " + fecha + ".\r\n");
 				descargasFallidas.incrementAndGet();
 				return;
 			}

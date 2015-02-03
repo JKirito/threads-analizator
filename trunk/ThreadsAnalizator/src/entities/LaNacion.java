@@ -104,7 +104,7 @@ public class LaNacion extends DiarioDigital {
 		return new Note(volanta.text(), titulo.text(), descripcion.text(), cuerpo.text(), "", null);
 	}
 
-	public Document getNotaFromDocument(Document doc) {
+	public Document getNotaPreProcesadaFromDocument(Document doc) {
 		if (doc.getElementById("encabezado") == null) {
 			System.out.println("No tiene encabezado");
 			return null;
