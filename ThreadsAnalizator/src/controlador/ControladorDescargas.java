@@ -126,10 +126,6 @@ public class ControladorDescargas implements ActionListener {
 				this.modeloDescarga = new ModeloDescargaNotas();
 				cargarDatosModoDescargaNotas();
 
-				if (!validacionCarpetasOk(((ModeloDescargaNotas) this.modeloDescarga).getRutaOrigen())) {
-					vistaDescargas.getBtnAgregarCarpetaOrigen().doClick();
-					return;
-				}
 			} else if (vistaDescargas.getRadioBtnDescargarTapas().isSelected()) {
 				this.modeloDescarga = new ModeloDescargaTapas();
 				cargarDatosModoDescargaTapas();
@@ -141,8 +137,12 @@ public class ControladorDescargas implements ActionListener {
 				return;
 			}
 
-			String nuevoPath = ofrecerAgregarCarpetaDestino(this.modeloDescarga.getRutaDestino());
-			this.modeloDescarga.setRutaDestino(nuevoPath);
+			String viejoPathDestino = this.modeloDescarga.getRutaDestino();
+			String nuevoPathDestino = ofrecerAgregarCarpetaDestino(this.modeloDescarga.getRutaDestino());
+			this.modeloDescarga.setRutaDestino(nuevoPathDestino);
+			if(!nuevoPathDestino.equals(viejoPathDestino)){
+				return;
+			}
 
 			if (this.modeloDescarga instanceof ModeloDescargaTapas) {
 				msjValidacion = ((ModeloDescargaTapas) this.modeloDescarga).validarDatos();
@@ -153,6 +153,13 @@ public class ControladorDescargas implements ActionListener {
 			if (!msjValidacion.isEmpty()) {
 				mostrarMsjAUsuario(msjValidacion, "Alerta", JOptionPane.WARNING_MESSAGE);
 				return;
+			}
+
+			if(this.modeloDescarga instanceof ModeloDescargaNotas){
+				if (!validacionCarpetasOk(((ModeloDescargaNotas) this.modeloDescarga).getRutaOrigen())) {
+					vistaDescargas.getBtnAgregarCarpetaOrigen().doClick();
+					return;
+				}
 			}
 
 			if (!validacionCarpetasOk(this.modeloDescarga.getRutaDestino())) {
@@ -300,7 +307,7 @@ public class ControladorDescargas implements ActionListener {
 	}
 
 	private void guardarOpciones() throws IOException {
-		FileWriter opcionesInicialesFile = new FileWriter("conf" + File.separator + "opcionesIniciales.cfg");
+		FileWriter opcionesInicialesFile = new FileWriter("opcionesIniciales.cfg");
 		if (vistaDescargas.getRadioBtnDescargarNotas().isSelected()) {
 			opcionesInicialesFile.write("MD:N\n");
 		} else {
@@ -331,12 +338,14 @@ public class ControladorDescargas implements ActionListener {
 	}
 
 	private void cargarDatosIniciales() {
-		boolean cargarDatosPorDefecto = vistaDescargas
-				.solicitarRespuestaAUsuario("¿Desea cargar las opciones por defecto?");
-		if (cargarDatosPorDefecto) {
+
 			String fileName = "opcionesIniciales.cfg";
-			File datosInicialesFile = new File("conf" + File.separator + fileName);
+			File datosInicialesFile = new File(fileName);
 			if (datosInicialesFile.exists()) {
+			boolean cargarDatosPorDefecto = vistaDescargas
+					.solicitarRespuestaAUsuario("¿Desea cargar las opciones por defecto?");
+			if (cargarDatosPorDefecto) {
+
 				FileInputStream fis = null;
 				try {
 					fis = new FileInputStream(datosInicialesFile.getAbsolutePath());

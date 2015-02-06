@@ -104,23 +104,11 @@ public class PageDownloader extends Observable {
 		@Override
 		public void run() {
 			String nombreArchivo = diario.getNombreArchivo(fecha);
-			descargasARealizar.incrementAndGet();
-
-			// Notificar avance de descargas para el Jprogress
-			setChanged();
-			notifyObservers(descargasARealizar);
-
-			// Doy un pequeño tiempo para que se actualice el contador del
-			// Jprogress
-			try {
-				Thread.sleep(10);
-			} catch (InterruptedException e1) {
-				e1.printStackTrace();
-			}
 
 			if (!override) {
 				if (StoreFile.fileExists(pathAGuardar, nombreArchivo, formatoSalida.getExtension())) {
 					descargasNoNecesarias.incrementAndGet();
+					incrementDescargasARealizar();
 					return;
 				}
 			}
@@ -135,6 +123,7 @@ public class PageDownloader extends Observable {
 
 			try {
 				page = Jsoup.connect(linkActual).timeout(0).get();
+				incrementDescargasARealizar();
 				if (!diario.esValido(page)) {
 					erroresDescarga.add("Al parecer " + diario.getNombreDiario() + " no tiene noticias en la sección "
 							+ seccion.getNombreSeccion() + " del día: " + fecha + ".\r\n");
@@ -146,16 +135,19 @@ public class PageDownloader extends Observable {
 						+ seccion.getNombreSeccion() + " del día: " + fecha
 						+ ". Esto puede deberse a una desconexión de internet.\r\n");
 				descargasFallidas.incrementAndGet();
+				incrementDescargasARealizar();
 				return;
 			} catch (SocketTimeoutException e) {
 				erroresDescarga.add("No se pudo descargar el diario " + diario.getNombreDiario() + ", sección "
 						+ seccion.getNombreSeccion() + " del día: " + fecha + ". Error por Time out.\r\n");
 				descargasFallidas.incrementAndGet();
+				incrementDescargasARealizar();
 				return;
 			} catch (IOException e) {
 				erroresDescarga.add("No se pudo descargar el diario " + diario.getNombreDiario() + ", sección "
 						+ seccion.getNombreSeccion() + " del día: " + fecha + ".\r\n");
 				descargasFallidas.incrementAndGet();
+				incrementDescargasARealizar();
 				return;
 			}
 
@@ -243,6 +235,26 @@ public class PageDownloader extends Observable {
 
 	public void detenerEjecucion() {
 		this.detener = true;
+	}
+
+	public void mostrarCambiosParaJprogres(Integer descargasARealizar2) {
+		if (detener) {
+			return;
+		}
+		this.setChanged();
+		this.notifyObservers(descargasARealizar2);
+		// Doy un pequeño tiempo para que se actualice el contador
+		// del Jprogress
+		try {
+			Thread.sleep(10);
+		} catch (InterruptedException e1) {
+			e1.printStackTrace();
+		}
+	}
+
+	public void incrementDescargasARealizar() {
+		this.descargasARealizar.incrementAndGet();
+		mostrarCambiosParaJprogres(this.descargasARealizar.intValue());
 	}
 
 }
