@@ -73,7 +73,7 @@ public class ModeloDescargaNotas extends ModeloDescarga {
 	public String validarDatos() {
 		String errores = super.validarDatos();
 		if (this.rutaOrigen == null || this.rutaOrigen.isEmpty()) {
-			errores += "-" + MSJ_CARPETAORIGEN_VACIO + "\n";
+			errores += "-" + MSJ_CARPETAORIGEN_VACIO + "\r\n";
 		}
 		return errores;
 	}

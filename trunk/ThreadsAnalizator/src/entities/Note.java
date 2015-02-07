@@ -48,16 +48,16 @@ public class Note {
 	public String toString(){
 		String nota = "";
 		if(!this.volante.trim().isEmpty()){
-			nota+=this.volante + "\n";
+			nota+=this.volante + "\r\n";
 		}
 		if(!this.titulo.trim().isEmpty()){
 			nota+= this.titulo +"\n";
 		}
 		if(!this.descripcion.trim().isEmpty()){
-			nota+= this.descripcion + "\n";
+			nota+= this.descripcion + "\r\n";
 		}
 		if(!this.cuerpo.trim().isEmpty()){
-			nota+= this.cuerpo + "\n";
+			nota+= this.cuerpo + "\r\n";
 		}
 		if(!this.autor.trim().isEmpty()){
 			nota+= this.autor;

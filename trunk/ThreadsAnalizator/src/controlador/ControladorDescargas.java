@@ -309,30 +309,30 @@ public class ControladorDescargas implements ActionListener {
 	private void guardarOpciones() throws IOException {
 		FileWriter opcionesInicialesFile = new FileWriter("opcionesIniciales.cfg");
 		if (vistaDescargas.getRadioBtnDescargarNotas().isSelected()) {
-			opcionesInicialesFile.write("MD:N\n");
+			opcionesInicialesFile.write("MD=N\r\n");
 		} else {
-			opcionesInicialesFile.write("MD:T\n");
+			opcionesInicialesFile.write("MD=T\r\n");
 		}
 		if (vistaDescargas.getRadioBtnPagina12().isSelected()) {
-			opcionesInicialesFile.write("D:P12\n");
+			opcionesInicialesFile.write("D=P12\r\n");
 		} else {
-			opcionesInicialesFile.write("D:LN\n");
+			opcionesInicialesFile.write("D=LN\r\n");
 		}
 		if (vistaDescargas.getChckbxEconomia().isSelected()) {
-			opcionesInicialesFile.write("S:ECO\n");
+			opcionesInicialesFile.write("S=ECO\r\n");
 		}
 		if (vistaDescargas.getRadioBtnHTML().isSelected()) {
-			opcionesInicialesFile.write("F:HTML\n");
+			opcionesInicialesFile.write("F=HTML\r\n");
 		} else {
-			opcionesInicialesFile.write("F:TXT\n");
+			opcionesInicialesFile.write("F=TXT\r\n");
 		}
 		String ruta = vistaDescargas.getTextFieldCarpetaOrigen().getText().toString();
 		if (!ruta.isEmpty()) {
-			opcionesInicialesFile.write("OR:" + ruta + "\n");
+			opcionesInicialesFile.write("OR=" + ruta + "\r\n");
 		}
 		ruta = vistaDescargas.getTextFieldCarpetaDestino().getText().toString();
-		opcionesInicialesFile.write("DES:" + ruta + "\n");
-		opcionesInicialesFile.write("CD:" + vistaDescargas.getSpinnerCantDias().getValue());
+		opcionesInicialesFile.write("DES=" + ruta + "\r\n");
+		opcionesInicialesFile.write("CD=" + vistaDescargas.getSpinnerCantDias().getValue());
 		opcionesInicialesFile.close();
 
 	}
@@ -358,7 +358,7 @@ public class ControladorDescargas implements ActionListener {
 				String linea = "";
 				try {
 					while ((linea = bur.readLine()) != null) {
-						String[] opcion = linea.split(":");
+						String[] opcion = linea.split("=");
 
 						if (opcion.length == 2) {
 							if (opcion[0].equals("MD")) {

@@ -112,17 +112,17 @@ public abstract class ModeloDescarga {
 		String errores = "";
 		if (this.getDiarioDescarga() == null){
 //				|| this.getDiarioDescarga().getNombreDiario().isEmpty()) {
-			errores += "-" + MSJ_DIARIO_DESCARGA_VACIO + "\n";
+			errores += "-" + MSJ_DIARIO_DESCARGA_VACIO + "\r\n";
 		}
 		if (this.getRutaDestino() == null || this.getRutaDestino().isEmpty()) {
-			errores += "-" + MSJ_CARPETADESTINO_VACIO + "\n";
+			errores += "-" + MSJ_CARPETADESTINO_VACIO + "\r\n";
 		}
 		if (this.getSeccionDescarga() == null){
 //				|| this.getSeccionDescarga().isEmpty()) {
-			errores += "-" + MSJ_SECCION_DESCARGA_VACIO + "\n";
+			errores += "-" + MSJ_SECCION_DESCARGA_VACIO + "\r\n";
 		}
 		if (this.getFormatoOutput() == null) {
-			errores += "-" + MSJ_FORMATO_OUTPUT_VACIO + "\n";
+			errores += "-" + MSJ_FORMATO_OUTPUT_VACIO + "\r\n";
 		}
 		return errores;
 	}
