@@ -76,11 +76,11 @@ public class ModeloDescargaTapas extends ModeloDescarga {
 	public String validarDatos() {
 		String errores = super.validarDatos();
 		if (this.fechaDescargaHasta == null) {
-			errores += "-" + MSJ_FECHA_VACIO + "\n";
+			errores += "-" + MSJ_FECHA_VACIO + "\r\n";
 		}
 		if (this.fechaDescargaHasta != null) {
 			if (this.fechaDescargaHasta.after(new Date()))
-				errores += "-" + MSJ_FECHA_FUTURO + "\n";
+				errores += "-" + MSJ_FECHA_FUTURO + "\r\n";
 		}
 		return errores;
 	}
