@@ -31,7 +31,6 @@ public abstract class ModeloDescarga {
 	private static final String MSJ_DIARIO_DESCARGA_VACIO = "Debe seleccionar el diario del cual desea descargar";
 	private static final String MSJ_CARPETADESTINO_VACIO = "Debe seleccionar la carpeta de destino";
 	private static final String MSJ_SECCION_DESCARGA_VACIO = "Debe seleccionar la sección que desea descargar";
-	private static final String MSJ_FORMATO_OUTPUT_VACIO = "Debe seleccionar el formato de salida que desea descargar";
 
 	public ModeloDescarga() {
 		super();
@@ -120,9 +119,6 @@ public abstract class ModeloDescarga {
 		if (this.getSeccionDescarga() == null){
 //				|| this.getSeccionDescarga().isEmpty()) {
 			errores += "-" + MSJ_SECCION_DESCARGA_VACIO + "\r\n";
-		}
-		if (this.getFormatoOutput() == null) {
-			errores += "-" + MSJ_FORMATO_OUTPUT_VACIO + "\r\n";
 		}
 		return errores;
 	}
