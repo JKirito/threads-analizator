@@ -11,6 +11,7 @@ import entities.Seccion;
 public class ModeloDescargaNotas extends ModeloDescarga {
 
 	private static final String MSJ_CARPETAORIGEN_VACIO = "Debe seleccionar la carpeta de origen";
+	private static final String MSJ_FORMATO_OUTPUT_VACIO = "Debe seleccionar el formato de salida que desea descargar";
 	private String rutaOrigen;
 	private NotesRecolator noteRecolator;
 
@@ -74,6 +75,9 @@ public class ModeloDescargaNotas extends ModeloDescarga {
 		String errores = super.validarDatos();
 		if (this.rutaOrigen == null || this.rutaOrigen.isEmpty()) {
 			errores += "-" + MSJ_CARPETAORIGEN_VACIO + "\r\n";
+		}
+		if (this.getFormatoOutput() == null) {
+			errores += "-" + MSJ_FORMATO_OUTPUT_VACIO + "\r\n";
 		}
 		return errores;
 	}
