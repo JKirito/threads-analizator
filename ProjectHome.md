@@ -1,0 +1,1 @@
+analiza el tiempo de descarga de notas de la nacion y pagina12 con diferente cantidad de hilos buscando el número óptimo de hilos
